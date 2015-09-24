@@ -24,8 +24,7 @@ import hk.ust.cse.hunkim.questionroom.question.Question;
 
 public class MainActivity extends ListActivity {
 
-    // TODO: change this to your own Firebase URL
-    private static final String FIREBASE_URL = "https://classquestion.firebaseio.com/";
+    private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseIO.com/";
 
     private String roomName;
     private Firebase mFirebaseRef;
