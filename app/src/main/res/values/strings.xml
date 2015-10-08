@@ -9,5 +9,7 @@
 
     <string name="error_invalid_room_name">Use only alphanumeric characters</string>
     <string name="error_field_required">This field is required</string>
+    <string name="title_activity_base">Question Room</string>
+    <string name="search_activity_base">Search</string>
 
 </resources>
