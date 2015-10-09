@@ -11,5 +11,6 @@
     <string name="error_field_required">This field is required</string>
     <string name="title_activity_base">Question Room</string>
     <string name="search_activity_base">Search</string>
+    <string name="search_hint">Room Name</string>
 
 </resources>
