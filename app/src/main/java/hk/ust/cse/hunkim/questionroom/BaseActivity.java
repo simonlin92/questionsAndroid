@@ -149,8 +149,8 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void EnterRoom(String Name) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(InputDialog.ROOM_NAME, Name);
+        Intent intent = new Intent(this, QuestionActivity.class);
+        intent.putExtra(QuestionActivity.ROOM_NAME, Name);
         startActivity(intent);
     }
 

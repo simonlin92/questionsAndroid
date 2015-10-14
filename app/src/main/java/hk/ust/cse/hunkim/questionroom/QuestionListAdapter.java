@@ -27,15 +27,15 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
 
     // The mUsername for this client. We use this to indicate which messages originated from this user
     private String roomName;
-    MainActivity activity;
+    QuestionActivity activity;
 
     public QuestionListAdapter(Query ref, Activity activity, int layout, String roomName) {
         super(ref, Question.class, layout, activity);
 
         // Must be MainActivity
-        assert (activity instanceof MainActivity);
+        assert (activity instanceof QuestionActivity);
 
-        this.activity = (MainActivity) activity;
+        this.activity = (QuestionActivity) activity;
     }
 
     /**

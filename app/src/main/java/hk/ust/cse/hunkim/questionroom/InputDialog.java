@@ -17,8 +17,6 @@ import android.widget.ImageView;
 
 public class InputDialog extends Dialog implements View.OnClickListener {
 
-    public static final String ROOM_NAME = "Room_name";
-
     private Activity parent;
     private TextInputLayout textInputLayout;
 
@@ -72,7 +70,7 @@ public class InputDialog extends Dialog implements View.OnClickListener {
         if (textInputLayout.isErrorEnabled()) return;
         dismiss();
         Intent intent = new Intent(parent, MainActivity.class);
-        intent.putExtra(ROOM_NAME, textInputLayout.getEditText().getText());
+        intent.putExtra(QuestionActivity.ROOM_NAME, textInputLayout.getEditText().getText());
         parent.startActivity(intent);
     }
 
