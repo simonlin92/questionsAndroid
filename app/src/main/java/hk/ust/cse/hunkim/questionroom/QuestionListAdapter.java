@@ -1,11 +1,16 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.client.Query;
@@ -52,9 +57,9 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
 
         // Map a Chat object to an entry in our listview
         int echo = question.getEcho();
-        Button echoButton = (Button) view.findViewById(R.id.echo);
-        echoButton.setText("" + echo);
-        echoButton.setTextColor(Color.BLUE);
+        ImageView echoButton = (ImageView) view.findViewById(R.id.echo);
+        TextView echoText = (TextView) view.findViewById(R.id.echo_text);
+        echoText.setText("" + echo);
 
 
         echoButton.setTag(question.getKey()); // Set tag for button
@@ -63,7 +68,7 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        MainActivity m = (MainActivity) view.getContext();
+                        QuestionActivity m = (QuestionActivity) view.getContext();
                         m.updateEcho((String) view.getTag());
                     }
                 }
@@ -101,9 +106,9 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
         // http://stackoverflow.com/questions/8743120/how-to-grey-out-a-button
         // grey out our button
         if (clickable) {
-            echoButton.getBackground().setColorFilter(null);
+            echoButton.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
         } else {
-            echoButton.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+            echoButton.setColorFilter(ContextCompat.getColor(activity, R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
         }
 
 
@@ -119,4 +124,5 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
     protected void setKey(String key, Question model) {
         model.setKey(key);
     }
+
 }
