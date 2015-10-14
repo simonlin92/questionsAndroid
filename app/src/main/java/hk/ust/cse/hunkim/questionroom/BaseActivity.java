@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,7 +25,6 @@ import java.util.List;
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
     private RecyclerView recyclerView;
     private RoomAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
     private List<RoomInfo> dataSet;
     private CollapsingToolbarLayout collapsingToolbarLayout;
 
@@ -41,37 +41,24 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         dataSet = new ArrayList<>();
 
         // TODO: Remove menu input
         // Get Room list from firebase and add them to dataSet
         // Firebase should able to update if new room is added same as question
-        // When trying to update the list DONT create a new one, use the add(), insert(), remove(), and clear() instead
-        // After update call adapter.notifyDataSetChanged();
+        // Call adapter.flushFilter(); after you update dataSet
         dataSet.add(new RoomInfo("asd", 1));
         dataSet.add(new RoomInfo("eee", 2));
         dataSet.add(new RoomInfo("fff", 3));
         dataSet.add(new RoomInfo("sad", 4));
-        dataSet.add(new RoomInfo("asd", 1));
-        dataSet.add(new RoomInfo("eee", 2));
-        dataSet.add(new RoomInfo("fff", 3));
-        dataSet.add(new RoomInfo("sad", 4));
-        dataSet.add(new RoomInfo("asd", 1));
-        dataSet.add(new RoomInfo("eee", 2));
-        dataSet.add(new RoomInfo("fff", 3));
-        dataSet.add(new RoomInfo("sad", 4));
-        dataSet.add(new RoomInfo("asd", 1));
-        dataSet.add(new RoomInfo("eee", 2));
-        dataSet.add(new RoomInfo("fff", 3));
-        dataSet.add(new RoomInfo("sad", 4));
-        dataSet.add(new RoomInfo("asd", 1));
-        dataSet.add(new RoomInfo("eee", 2));
-        dataSet.add(new RoomInfo("fff", 3));
-        dataSet.add(new RoomInfo("sad", 4));
+        dataSet.add(new RoomInfo("bbb", 2));
+        dataSet.add(new RoomInfo("ccc", 3));
+        dataSet.add(new RoomInfo("def", 2));
+        dataSet.add(new RoomInfo("kkk", 3));
 
-        adapter = new RoomAdapter(dataSet);
+        adapter = new RoomAdapter(new ArrayList<>(dataSet));
         recyclerView.setAdapter(adapter);
     }
 
@@ -81,12 +68,18 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         final MenuItem item = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
+        searchView.setSubmitButtonEnabled(true);
         MenuItemCompat.setOnActionExpandListener(item, this);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        if (InputDialog.isEmailValid(query)) {
+            EnterRoom(query);
+            return true;
+        }
+        Snackbar.make(findViewById(R.id.root_layout),"Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_SHORT).show();
         return false;
     }
 
@@ -106,7 +99,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     private List<RoomInfo> filter(List<RoomInfo> roomInfos, String query) {
         query = query.toLowerCase();
-
         final List<RoomInfo> filteredRoomInfoList = new ArrayList<>();
         for (RoomInfo model : roomInfos) {
             final String text = model.Name.toLowerCase();
@@ -126,6 +118,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
+        adapter.flushFilter();
         return true;
     }
 
@@ -159,6 +152,11 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
         public RoomAdapter(List<RoomInfo> roomInfoList) {
             this.roomInfoList = roomInfoList;
+        }
+
+        public void flushFilter() {
+            roomInfoList = new ArrayList<>(dataSet);
+            notifyDataSetChanged();
         }
 
         @Override
@@ -212,7 +210,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         private void applyAndAnimateRemovals(List<RoomInfo> roomInfos) {
-            for (int i = roomInfos.size() - 1; i >= 0; i--) {
+            for (int i = roomInfoList.size() - 1; i >= 0; i--) {
                 final RoomInfo roomInfo = roomInfoList.get(i);
                 if (!roomInfos.contains(roomInfo)) {
                     removeItem(i);

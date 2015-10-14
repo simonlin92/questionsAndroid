@@ -74,7 +74,7 @@ public class InputDialog extends Dialog implements View.OnClickListener {
         parent.startActivity(intent);
     }
 
-    private boolean isEmailValid(String room_name) {
+    public static boolean isEmailValid(String room_name) {
         // http://stackoverflow.com/questions/8248277
         // Make sure alphanumeric characters
         return !room_name.matches("^.*[^a-zA-Z0-9 ].*$");
