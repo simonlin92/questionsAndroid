@@ -163,13 +163,10 @@ public class Question implements Comparable<Question> {
         }
 
 
-        if (this.echo == other.echo) {
             if (other.timestamp == this.timestamp) {
                 return 0;
             }
             return other.timestamp > this.timestamp ? -1 : 1;
-        }
-        return this.echo - other.echo;
     }
 
 

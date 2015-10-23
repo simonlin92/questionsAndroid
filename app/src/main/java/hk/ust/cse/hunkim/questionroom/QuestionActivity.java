@@ -19,6 +19,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.util.Date;
+
 import hk.ust.cse.hunkim.questionroom.db.DBHelper;
 import hk.ust.cse.hunkim.questionroom.db.DBUtil;
 import hk.ust.cse.hunkim.questionroom.question.Question;
@@ -94,7 +96,7 @@ public class QuestionActivity extends AppCompatActivity {
         final ListView listView = (ListView) findViewById(R.id.question_list);
         // Tell our list adapter that we only want 200 messages at a time
         mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild("echo").limitToFirst(200),
+                mFirebaseRef.orderByChild("timestamp").limitToFirst(200),
                 this, R.layout.question, roomName);
         listView.setAdapter(mChatListAdapter);
 
@@ -159,6 +161,23 @@ public class QuestionActivity extends AppCompatActivity {
                         Log.e("Echo update:", "" + echoValue);
 
                         echoRef.setValue(echoValue + 1);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                }
+        );
+
+        final Firebase time = mFirebaseRef.child(key).child("timestamp");
+        echoRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.e("Echo update:", "" + new Date().getTime());
+
+                        time.setValue(new Date().getTime());
                     }
 
                     @Override
