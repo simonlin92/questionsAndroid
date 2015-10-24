@@ -1,23 +1,37 @@
 package hk.ust.cse.hunkim.questionroom;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+
+import java.util.Date;
 
 import hk.ust.cse.hunkim.questionroom.db.DBHelper;
 import hk.ust.cse.hunkim.questionroom.db.DBUtil;
@@ -31,9 +45,8 @@ public class QuestionActivity extends AppCompatActivity {
     private Firebase mFirebaseRef;
     private ValueEventListener mConnectedListener;
     private QuestionListAdapter mChatListAdapter;
-
+    public static String sort_type;
     private DBUtil dbutil;
-
     public DBUtil getDbutil() {
         return dbutil;
     }
@@ -42,10 +55,16 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
-
         //initialized once with an Android context.
         Firebase.setAndroidContext(this);
-
+        //initialized the sort_type
+        if(!read_sort().equals("default")){
+            sort_type=read_sort();
+        }else{
+            sort_type="timestamp";
+           save_sort(sort_type);
+        }
+        Log.w("debug","Sort_type in onCreate: " + sort_type);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_question);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -83,7 +102,73 @@ public class QuestionActivity extends AppCompatActivity {
         // get the DB Helper
         DBHelper mDbHelper = new DBHelper(this);
         dbutil = new DBUtil(mDbHelper);
+    }
 
+    //Save and read the data from the SharedPreferences
+    public void save_sort(String choice){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("sort_choice", choice);
+        editor.apply();
+    }
+
+    public String read_sort(){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String string_temp = sharedPref.getString("sort_choice","default");
+        return string_temp;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        menu.add(0,0,0,"Sort by Time");
+        menu.add(0,1,0,"Sort by Like");
+        return true;
+    }
+
+    //According to the menu choice, turn to its sort type
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final ListView listView = (ListView) findViewById(R.id.question_list);
+        switch(item.getItemId()) {
+            case 0:
+                sort_type="timestamp";
+                save_sort(sort_type);
+                Log.w("debug", "Sort_type switch : " + read_sort());
+                mChatListAdapter = new QuestionListAdapter(
+                        mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
+                        this, R.layout.question, roomName);
+                listView.setAdapter(mChatListAdapter);
+
+                mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
+                    @Override
+                    public void onChanged() {
+                        super.onChanged();
+                        listView.setSelection(mChatListAdapter.getCount() - 1);
+                    }
+                });
+
+                break;
+            case 1:
+                sort_type="echo";
+                save_sort(sort_type);
+                Log.w("debug", "Sort_type switch: " + read_sort());
+                mChatListAdapter = new QuestionListAdapter(
+                        mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
+                        this, R.layout.question, roomName);
+                listView.setAdapter(mChatListAdapter);
+
+                mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
+                    @Override
+                    public void onChanged() {
+                        super.onChanged();
+                        listView.setSelection(mChatListAdapter.getCount() - 1);
+                    }
+                });
+                break;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -94,8 +179,9 @@ public class QuestionActivity extends AppCompatActivity {
         final ListView listView = (ListView) findViewById(R.id.question_list);
         // Tell our list adapter that we only want 200 messages at a time
         mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild("echo").limitToFirst(200),
+                mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
                 this, R.layout.question, roomName);
+        Log.w("debug","Sort_type: " + sort_type);
         listView.setAdapter(mChatListAdapter);
 
         mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
