@@ -92,7 +92,7 @@ public class MainActivity extends ListActivity {
         final ListView listView = getListView();
         // Tell our list adapter that we only want 200 messages at a time
         mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild("timestamp").limitToFirst(200),
+                mFirebaseRef.orderByChild(QuestionActivity.sort_type).limitToFirst(200),
                 this, R.layout.question, roomName);
         listView.setAdapter(mChatListAdapter);
 

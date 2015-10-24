@@ -2,6 +2,8 @@ package hk.ust.cse.hunkim.questionroom.question;
 
 import java.util.Date;
 
+import hk.ust.cse.hunkim.questionroom.QuestionActivity;
+
 /**
  * Created by hunkim on 7/16/15.
  */
@@ -155,18 +157,28 @@ public class Question implements Comparable<Question> {
     @Override
     public int compareTo(Question other) {
         // Push new on top
+        /*
         other.updateNewQuestion(); // update NEW button
         this.updateNewQuestion();
 
         if (this.newQuestion != other.newQuestion) {
             return this.newQuestion ? 1 : -1; // this is the winner
         }
-
-
+        */
+        if(QuestionActivity.sort_type.equals("timestamp")){
             if (other.timestamp == this.timestamp) {
                 return 0;
             }
             return other.timestamp > this.timestamp ? -1 : 1;
+        }else{
+            if (this.echo == other.echo) {
+                if (other.timestamp == this.timestamp) {
+                    return 0;
+                }
+                return other.timestamp > this.timestamp ? -1 : 1;
+            }
+            return this.echo - other.echo;
+        }
     }
 
 
