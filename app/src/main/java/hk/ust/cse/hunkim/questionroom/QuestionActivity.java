@@ -133,41 +133,28 @@ public class QuestionActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case 0:
                 sort_type="timestamp";
-                save_sort(sort_type);
-                Log.w("debug", "Sort_type switch : " + read_sort());
-                mChatListAdapter = new QuestionListAdapter(
-                        mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
-                        this, R.layout.question, roomName);
-                listView.setAdapter(mChatListAdapter);
-
-                mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
-                    @Override
-                    public void onChanged() {
-                        super.onChanged();
-                        listView.setSelection(mChatListAdapter.getCount() - 1);
-                    }
-                });
-
                 break;
             case 1:
                 sort_type="echo";
-                save_sort(sort_type);
-                Log.w("debug", "Sort_type switch: " + read_sort());
-                mChatListAdapter = new QuestionListAdapter(
-                        mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
-                        this, R.layout.question, roomName);
-                listView.setAdapter(mChatListAdapter);
-
-                mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
-                    @Override
-                    public void onChanged() {
-                        super.onChanged();
-                        listView.setSelection(mChatListAdapter.getCount() - 1);
-                    }
-                });
                 break;
             default:
+                return super.onOptionsItemSelected(item);
         }
+
+        save_sort(sort_type);
+        Log.w("debug", "Sort_type switch: " + read_sort());
+        mChatListAdapter = new QuestionListAdapter(
+                mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
+                this, R.layout.question, roomName);
+        listView.setAdapter(mChatListAdapter);
+
+        mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                listView.setSelection(mChatListAdapter.getCount() - 1);
+            }
+        });
         return super.onOptionsItemSelected(item);
     }
 
