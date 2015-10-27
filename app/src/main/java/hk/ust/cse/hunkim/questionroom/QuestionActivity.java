@@ -1,37 +1,28 @@
 package hk.ust.cse.hunkim.questionroom;
 
-import android.app.Dialog;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-
-import java.util.Date;
 
 import hk.ust.cse.hunkim.questionroom.db.DBHelper;
 import hk.ust.cse.hunkim.questionroom.db.DBUtil;
@@ -58,8 +49,8 @@ public class QuestionActivity extends AppCompatActivity {
         //initialized once with an Android context.
         Firebase.setAndroidContext(this);
         //initialized the sort_type
-        if(!read_sort().equals("default")){
-            sort_type=read_sort();
+        if(!read_sort(this).equals("default")){
+            sort_type=read_sort(this);
         }else{
             sort_type="timestamp";
            save_sort(sort_type);
@@ -112,8 +103,8 @@ public class QuestionActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public String read_sort(){
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+    public static String read_sort(Activity activity){
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         String string_temp = sharedPref.getString("sort_choice","default");
         return string_temp;
     }
@@ -121,8 +112,10 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
-        menu.add(0,0,0,"Sort by Time");
-        menu.add(0,1,0,"Sort by Like");
+        menu.add(0, 0, 0, "Latest First");
+        menu.add(0,1,0,"Most Likes First");
+        menu.add(0,2,0,"Oldest First");
+        menu.add(0,3,0,"Less Likes First");
         return true;
     }
 
@@ -132,9 +125,11 @@ public class QuestionActivity extends AppCompatActivity {
         final ListView listView = (ListView) findViewById(R.id.question_list);
         switch(item.getItemId()) {
             case 0:
+            case 2:
                 sort_type="timestamp";
                 break;
             case 1:
+            case 3:
                 sort_type="echo";
                 break;
             default:
@@ -142,7 +137,7 @@ public class QuestionActivity extends AppCompatActivity {
         }
 
         save_sort(sort_type);
-        Log.w("debug", "Sort_type switch: " + read_sort());
+        Log.w("debug", "Sort_type switch: " + read_sort(this));
         mChatListAdapter = new QuestionListAdapter(
                 mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
                 this, R.layout.question, roomName);
