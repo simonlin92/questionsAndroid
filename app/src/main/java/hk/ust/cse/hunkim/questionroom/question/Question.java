@@ -52,8 +52,8 @@ public class Question implements Comparable<Question> {
         this.echo = 0;
         this.head = getFirstSentence(message).trim();
         this.desc = "";
-        if (this.head.length() < message.length()) {
-            this.desc = message.substring(this.head.length());
+        if (this.head.length()+1 < message.length()) {
+            this.desc = message.substring(this.head.length()+1);
         }
 
         // get the last char
@@ -68,7 +68,7 @@ public class Question implements Comparable<Question> {
      * @return
      */
     public static String getFirstSentence(String message) {
-        String[] tokens = {". ", "? ", "! "};
+        String[] tokens = {".", "?", "!", "\n"};
 
         int index = -1;
 

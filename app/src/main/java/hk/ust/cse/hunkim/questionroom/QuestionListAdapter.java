@@ -75,21 +75,17 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
 
         );
 
-        String msgString = "";
-
         question.updateNewQuestion();
-        if (question.isNewQuestion()) {
-            msgString += "<font color=red>NEW </font>";
-        }
-
-        msgString += "<B>" + Html.escapeHtml(question.getHead()) + "</B>" + Html.escapeHtml(question.getDesc());
-
-        ((TextView) view.findViewById(R.id.head_desc)).setText(Html.fromHtml(msgString));
+        if(!question.isNewQuestion())
+            view.findViewById(R.id.Question_New).setVisibility(View.GONE);
+        ((TextView) view.findViewById(R.id.Question_Title)).setText(question.getHead().replace("\n", ""));
+        ((TextView) view.findViewById(R.id.head_desc)).setText(question.getDesc());
+        if(question.getDesc().isEmpty())
+            view.findViewById(R.id.head_desc).setVisibility(View.GONE);
         view.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        QuestionActivity m = (QuestionActivity) view.getContext();
-                                        m.updateEcho((String) view.getTag());
+                                        //TODO: Reply
                                     }
                                 }
 
