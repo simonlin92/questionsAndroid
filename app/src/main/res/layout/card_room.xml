@@ -28,7 +28,7 @@
             android:id="@+id/card_room_count"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="#B2DFDB"
+            android:background="@color/colorSub"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

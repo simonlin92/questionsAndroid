@@ -3,4 +3,5 @@
     <item name="colorPrimary" type="color">#009688</item>
     <item name="colorPrimaryDark" type="color">#00796B</item>
     <item name="colorAccent" type="color">#FF5722</item>
+    <item name="colorSub" type="color">#B2DFDB</item>
 </resources>
