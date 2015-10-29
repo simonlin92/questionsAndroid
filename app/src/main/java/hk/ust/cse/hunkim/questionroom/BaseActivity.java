@@ -19,10 +19,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
+    private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
+    private Firebase mFirebaseRef;
     private RecyclerView recyclerView;
     private RoomAdapter adapter;
     private List<RoomInfo> dataSet;
@@ -31,6 +38,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_base);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -50,19 +58,22 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         // Get Room list from firebase and add them to dataSet
         // Firebase should able to update if new room is added same as question
         // Call adapter.flushFilter(); after you update dataSet
-        dataSet.add(new RoomInfo("asd", 1));
-        dataSet.add(new RoomInfo("eee", 2));
-        dataSet.add(new RoomInfo("fff", 3));
-        dataSet.add(new RoomInfo("sad", 4));
-        dataSet.add(new RoomInfo("bbb", 2));
-        dataSet.add(new RoomInfo("ccc", 3));
-        dataSet.add(new RoomInfo("def", 2));
-        dataSet.add(new RoomInfo("kkk", 3));
+        mFirebaseRef = new Firebase(FIREBASE_URL);
+        mFirebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot Snapshot : snapshot.getChildren()) {
+                    dataSet.add(new RoomInfo(Snapshot.getKey(),(int)Snapshot.child("/questions").getChildrenCount()));
+                }
+                    adapter = new RoomAdapter(new ArrayList<>(dataSet));
+                    recyclerView.setAdapter(adapter);
+                }
 
-        adapter = new RoomAdapter(new ArrayList<>(dataSet));
-        recyclerView.setAdapter(adapter);
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.base_menu, menu);
@@ -111,13 +122,13 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
+        public boolean onMenuItemActionExpand(MenuItem item) {
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
         return true;
     }
 
     @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
+        public boolean onMenuItemActionCollapse(MenuItem item) {
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
         adapter.flushFilter();
         return true;
