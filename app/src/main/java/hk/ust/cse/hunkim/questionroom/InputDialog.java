@@ -70,7 +70,7 @@ public class InputDialog extends Dialog implements View.OnClickListener {
         if (textInputLayout.isErrorEnabled()) return;
         dismiss();
         Intent intent = new Intent(parent, QuestionActivity.class);
-        intent.putExtra(QuestionActivity.ROOM_NAME, textInputLayout.getEditText().getText());
+        intent.putExtra(QuestionActivity.ROOM_NAME, textInputLayout.getEditText().getText().toString());
         parent.startActivity(intent);
     }
 
