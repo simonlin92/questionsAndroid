@@ -27,7 +27,7 @@ import com.firebase.client.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener {
     private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
     private Firebase mFirebaseRef;
     private RecyclerView recyclerView;
@@ -63,11 +63,11 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot Snapshot : snapshot.getChildren()) {
-                    dataSet.add(new RoomInfo(Snapshot.getKey(),(int)Snapshot.child("/questions").getChildrenCount()));
+                    dataSet.add(new RoomInfo(Snapshot.getKey(), (int) Snapshot.child("/questions").getChildrenCount()));
                 }
-                    adapter = new RoomAdapter(new ArrayList<>(dataSet));
-                    recyclerView.setAdapter(adapter);
-                }
+                adapter = new RoomAdapter(new ArrayList<>(dataSet));
+                recyclerView.setAdapter(adapter);
+            }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -80,8 +80,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         final MenuItem item = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
-        searchView.setSubmitButtonEnabled(true);
-        MenuItemCompat.setOnActionExpandListener(item, this);
         return true;
     }
 
@@ -97,6 +95,8 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        if(adapter==null)
+            return true;
         final List<RoomInfo> filteredModelList = filter(dataSet, newText);
         adapter.animateTo(filteredModelList);
         recyclerView.scrollToPosition(0);
@@ -119,19 +119,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return filteredRoomInfoList;
-    }
-
-    @Override
-        public boolean onMenuItemActionExpand(MenuItem item) {
-        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.TRANSPARENT);
-        return true;
-    }
-
-    @Override
-        public boolean onMenuItemActionCollapse(MenuItem item) {
-        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
-        adapter.flushFilter();
-        return true;
     }
 
     private class RoomInfo {
