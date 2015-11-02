@@ -25,9 +25,11 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener{
     private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
     private Firebase mFirebaseRef;
     private RecyclerView recyclerView;
@@ -65,6 +67,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
                 for (DataSnapshot Snapshot : snapshot.getChildren()) {
                     dataSet.add(new RoomInfo(Snapshot.getKey(), (int) Snapshot.child("/questions").getChildrenCount()));
                 }
+                Collections.sort(dataSet,new listComparator());
                 adapter = new RoomAdapter(new ArrayList<>(dataSet));
                 recyclerView.setAdapter(adapter);
             }
@@ -121,7 +124,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         return filteredRoomInfoList;
     }
 
-    private class RoomInfo {
+    private class RoomInfo{
         public final String Name;
         public final int Count;
 
@@ -129,7 +132,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             this.Name = Name;
             this.Count = Count;
         }
-
         @Override
         public boolean equals(Object other) {
             if (other == null) return false;
@@ -137,6 +139,19 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             if (!(other instanceof RoomInfo)) return false;
             RoomInfo otherRoomInfo = (RoomInfo) other;
             return Name.equals(otherRoomInfo.Name);
+        }
+    }
+
+
+    class listComparator implements Comparator<RoomInfo>{
+        @Override
+        public int compare(RoomInfo lhs, RoomInfo rhs) {
+            if(lhs.Count==rhs.Count)
+                return 0;
+            if (lhs.Count<rhs.Count)
+                return 1;
+            else
+                return -1;
         }
     }
 
