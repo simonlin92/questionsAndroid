@@ -2,6 +2,7 @@ package hk.ust.cse.hunkim.questionroom;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        build();
     }
 
     private void build()
@@ -38,7 +40,6 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
     @MediumTest
     public void testPreconditions()
     {
-        build();
         assertNotNull("Question activity is running", getActivity());
         assertNotNull("Send button is available", sendButton);
         assertNotNull("Question view is available", questionListView);
@@ -47,17 +48,53 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
     }
 
     @MediumTest
-    public void testAskQuestion() throws Exception {
-        build();
-        askThisQuestion(" Test question name as div", "<div>div region</div>");
-        askThisQuestion("Test question name as a tag", "<a href=\"http://www.ust.hk/\">link</a>");
-        askThisQuestion("testAskQuestion - Test question name as img tag", "<img src=\"abc.jpg/\"></img>");
-        askThisQuestion("testAskQuestion - Test question name as script", "<script>alert(\"test\");</script>");
-        askThisQuestion("testAskQuestion - Test question name as font", "<font color=blue>NEW </font>");
+    public void testLikeDislikeButtons() {
+        try { Thread.sleep(6000);} catch (InterruptedException e) {};
+        int total = questionListView.getCount();
+        askThisQuestion("Test like", "Like");
+        likeThisQuestion(total);
+        askThisQuestion("Test like and then dislike", "Like and then dislike");
+        likeThisQuestion(total + 1);
+        dislikeThisQuestion(total + 1);
+        askThisQuestion("Test dislike", "Dislike");
+        dislikeThisQuestion(total + 2);
+        askThisQuestion("Test dislike and then like", "Dislike and then like");
+        dislikeThisQuestion(total + 3);
+        likeThisQuestion(total + 3);
+        try { Thread.sleep(3000);} catch (InterruptedException e) {};
+    }
+
+    private void likeThisQuestion(final int targetPosition){
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getQuestionView(targetPosition).findViewById(R.id.echo).performClick();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+    }
+
+    private void dislikeThisQuestion(final int targetPosition){
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getQuestionView(targetPosition).findViewById(R.id.echoDown).performClick();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+    }
+
+    @MediumTest
+    public void testAskQuestion(){
+      //  askThisQuestion(" Test question name as div", "<div>div region</div>");
+      //  askThisQuestion("Test question name as a tag", "<a href=\"http://www.ust.hk/\">link</a>");
+       // askThisQuestion("testAskQuestion - Test question name as img tag", "<img src=\"abc.jpg/\"></img>");
+       // askThisQuestion("testAskQuestion - Test question name as script", "<script>alert(\"test\");</script>");
+      //  askThisQuestion("testAskQuestion - Test question name as font", "<font color=blue>NEW </font>");
 
     }
 
-    private void askThisQuestion(String message, final String input) throws Exception {
+    private void askThisQuestion(String message, final String input)  {
 
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -78,13 +115,7 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
             @Override
             public void run() {
 
-                int wantedPosition = questionListView.getCount() - 1;
-                int firstPosition = questionListView.getFirstVisiblePosition() - questionListView.getHeaderViewsCount();
-                int wantedChild = wantedPosition - firstPosition;
-
-                //move to bottom
-                questionListView.setSelection(questionListView.getCount() - 1);
-                View questionView = (View) questionListView.getChildAt(wantedChild);
+                View questionView =  getQuestionView(questionListView.getCount() - 1);
                 assertNotNull("Last question is available", questionView);
                 headView = (TextView) questionView.findViewById(R.id.Question_Title);
                 assertNotNull("Question head is available", headView);
@@ -101,6 +132,13 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
         }
         assertEquals(message, head, headView.getText().toString());
         assertEquals(message, desc, descView.getText().toString());
+    }
+
+    private View getQuestionView(int targetPosition)
+    {
+        int firstPosition = questionListView.getFirstVisiblePosition() - questionListView.getHeaderViewsCount();
+        int targetChild = targetPosition - firstPosition;
+        return questionListView.getChildAt(targetChild);
     }
 
 }

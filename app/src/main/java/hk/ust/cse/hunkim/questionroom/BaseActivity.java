@@ -36,6 +36,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     private RoomAdapter adapter;
     private List<RoomInfo> dataSet;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private InputDialog inputDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +109,13 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        InputDialog inputDialog = new InputDialog(this);
+        inputDialog = new InputDialog(this);
         inputDialog.show();
+    }
+
+    public InputDialog getInputDialog()
+    {
+        return this.inputDialog;
     }
 
     private List<RoomInfo> filter(List<RoomInfo> roomInfos, String query) {
