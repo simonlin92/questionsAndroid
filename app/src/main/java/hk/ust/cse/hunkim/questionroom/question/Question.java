@@ -25,6 +25,12 @@ public class Question implements Comparable<Question> {
     private int echo;
     private int order;
     private boolean newQuestion;
+    private String sort_string;
+
+    public enum sort_order {
+        timestamp,
+        echo
+    }
 
     public String getDateString() {
         return dateString;
@@ -149,6 +155,14 @@ public class Question implements Comparable<Question> {
         this.key = key;
     }
 
+    public String getSort(){
+        return sort_string;
+    }
+
+    public void setSort(String sort_str){
+        sort_string=sort_str;
+    }
+
     /**
      * New one/high echo goes bottom
      * @param other other chat
@@ -157,27 +171,34 @@ public class Question implements Comparable<Question> {
     @Override
     public int compareTo(Question other) {
         // Push new on top
-        /*
+
         other.updateNewQuestion(); // update NEW button
         this.updateNewQuestion();
-
+        /*
         if (this.newQuestion != other.newQuestion) {
             return this.newQuestion ? 1 : -1; // this is the winner
-        }
-        */
-        if(QuestionActivity.sort_type.equals("timestamp")){
-            if (other.timestamp == this.timestamp) {
-                return 0;
-            }
-            return other.timestamp > this.timestamp ? -1 : 1;
-        }else{
-            if (this.echo == other.echo) {
+        }*/
+
+        sort_order currentSort = sort_order.valueOf(getSort());
+        switch(currentSort) {
+            case timestamp:
                 if (other.timestamp == this.timestamp) {
                     return 0;
                 }
                 return other.timestamp > this.timestamp ? -1 : 1;
-            }
-            return this.echo - other.echo;
+            case echo:
+                if (this.echo == other.echo) {
+                    if (other.timestamp == this.timestamp) {
+                        return 0;
+                    }
+                    return other.timestamp > this.timestamp ? -1 : 1;
+                }
+                return this.echo - other.echo;
+            default:
+                if (other.timestamp == this.timestamp) {
+                    return 0;
+                }
+                return other.timestamp > this.timestamp ? -1 : 1;
         }
     }
 

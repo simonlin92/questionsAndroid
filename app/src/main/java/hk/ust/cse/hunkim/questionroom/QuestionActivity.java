@@ -36,7 +36,6 @@ public class QuestionActivity extends AppCompatActivity {
     private Firebase mFirebaseRef;
     private ValueEventListener mConnectedListener;
     private QuestionListAdapter mChatListAdapter;
-    public static String sort_type;
     private DBUtil dbutil;
     public DBUtil getDbutil() {
         return dbutil;
@@ -49,13 +48,11 @@ public class QuestionActivity extends AppCompatActivity {
         //initialized once with an Android context.
         Firebase.setAndroidContext(this);
         //initialized the sort_type
-        if(!read_sort(this).equals("default")){
-            sort_type=read_sort(this);
-        }else{
-            sort_type="timestamp";
-           save_sort(sort_type);
+        if(read_sort(this).equals("default")){
+            save_sort("timestamp");
         }
-        Log.w("debug","Sort_type in onCreate: " + sort_type);
+
+        Log.w("debug","Sort_type in onCreate: " + read_sort(this));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_question);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,42 +91,16 @@ public class QuestionActivity extends AppCompatActivity {
 
     public static String read_sort(Activity activity){
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        String string_temp = sharedPref.getString("sort_choice","default");
+        String string_temp = sharedPref.getString("sort_choice", "default");
         return string_temp;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        super.onCreateOptionsMenu(menu);
-        menu.add(0, 0, 0, "Latest First");
-        menu.add(0,1,0,"Most Likes First");
-        menu.add(0,2,0,"Oldest First");
-        menu.add(0,3,0,"Less Likes First");
-        return true;
-    }
-
-    //According to the menu choice, turn to its sort type
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public void setSort(String sort){
         final ListView listView = (ListView) findViewById(R.id.question_list);
-        switch(item.getItemId()) {
-            case 0:
-            case 2:
-                sort_type="timestamp";
-                break;
-            case 1:
-            case 3:
-                sort_type="echo";
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-        save_sort(sort_type);
-        Log.w("debug", "Sort_type switch: " + read_sort(this));
         mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
+                mFirebaseRef.orderByChild(sort).limitToFirst(200),
                 this, R.layout.question, roomName);
+        mChatListAdapter.set_sort(sort);
         listView.setAdapter(mChatListAdapter);
 
         mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -139,6 +110,30 @@ public class QuestionActivity extends AppCompatActivity {
                 listView.setSelection(mChatListAdapter.getCount() - 1);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        menu.add(0, 0, 0,"Latest");
+        menu.add(0,1,0,"Most Likes");
+        return true;
+    }
+
+    //According to the menu choice, turn to its sort type
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case 0:
+                save_sort("timestamp");break;
+            case 1:
+                save_sort("echo");break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        Log.w("debug", "Sort_type switch: " + read_sort(this));
+        setSort(read_sort(this));
         return super.onOptionsItemSelected(item);
     }
 
@@ -150,9 +145,10 @@ public class QuestionActivity extends AppCompatActivity {
         final ListView listView = (ListView) findViewById(R.id.question_list);
         // Tell our list adapter that we only want 200 messages at a time
         mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild(sort_type).limitToFirst(200),
+                mFirebaseRef.orderByChild(read_sort(this)).limitToFirst(200),
                 this, R.layout.question, roomName);
-        Log.w("debug","Sort_type: " + sort_type);
+        mChatListAdapter.set_sort(read_sort(this));
+        Log.w("debug","Sort_type: " + read_sort(this));
         listView.setAdapter(mChatListAdapter);
 
         mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
