@@ -86,11 +86,11 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
 
     @MediumTest
     public void testAskQuestion(){
-      //  askThisQuestion(" Test question name as div", "<div>div region</div>");
-      //  askThisQuestion("Test question name as a tag", "<a href=\"http://www.ust.hk/\">link</a>");
-       // askThisQuestion("testAskQuestion - Test question name as img tag", "<img src=\"abc.jpg/\"></img>");
-       // askThisQuestion("testAskQuestion - Test question name as script", "<script>alert(\"test\");</script>");
-      //  askThisQuestion("testAskQuestion - Test question name as font", "<font color=blue>NEW </font>");
+        askThisQuestion(" Test question name as div", "<div>div region</div>");
+        askThisQuestion("Test question name as a tag", "<a href=\"http://www.ust.hk/\">link</a>");
+        askThisQuestion("testAskQuestion - Test question name as img tag", "<img src=\"abc.jpg/\"></img>");
+        askThisQuestion("testAskQuestion - Test question name as script", "<script>alert(\"test\");</script>");
+        askThisQuestion("testAskQuestion - Test question name as font", "<font color=blue>NEW </font>");
 
     }
 
