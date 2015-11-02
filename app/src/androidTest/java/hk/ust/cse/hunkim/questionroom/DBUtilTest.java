@@ -27,11 +27,11 @@ public class DBUtilTest extends AndroidTestCase {
 
     public void testPut () {
         String key = "1234";
-        dbutil.put(key);
-        assertTrue("Put the key", dbutil.contains(key));
+        dbutil.put(key,true);
+        assertTrue("Put the key", dbutil.contains(key,true));
 
         dbutil.delete(key);
 
-        assertFalse("Key is deleted!", dbutil.contains(key));
+        assertFalse("Key is deleted!", dbutil.contains(key,true));
     }
 }
