@@ -68,7 +68,7 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
                     @Override
                     public void onClick(View view) {
                         QuestionActivity m = (QuestionActivity) view.getContext();
-                        m.updateEcho((String) view.getTag(), 1,true);
+                        m.updateEcho((String) view.getTag(), 1, true);
                     }
                 }
 
@@ -81,7 +81,7 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
                     @Override
                     public void onClick(View view) {
                         QuestionActivity m = (QuestionActivity) view.getContext();
-                        m.updateEcho((String) view.getTag(),-1,false);
+                        m.updateEcho((String) view.getTag(), -1, false);
                     }
                 }
 
@@ -90,10 +90,14 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
         question.updateNewQuestion();
         if(!question.isNewQuestion())
             view.findViewById(R.id.Question_New).setVisibility(View.GONE);
+        else
+            view.findViewById(R.id.Question_New).setVisibility(View.VISIBLE);
         ((TextView) view.findViewById(R.id.Question_Title)).setText(question.getHead().replace("\n", ""));
         ((TextView) view.findViewById(R.id.head_desc)).setText(question.getDesc());
         if(question.getDesc().isEmpty())
             view.findViewById(R.id.head_desc).setVisibility(View.GONE);
+        else
+            view.findViewById(R.id.head_desc).setVisibility(View.VISIBLE);
         view.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
