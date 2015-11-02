@@ -70,6 +70,17 @@
                 android:src="@drawable/ic_thumb_up_black_24dp"
                 android:tint="?attr/colorPrimary" />
 
+            <ImageView
+                android:id="@+id/echoDown"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:maxHeight="20dp"
+                android:paddingLeft="10dp"
+                android:src="@drawable/ic_thumb_down_black_24dp"
+                android:tint="?attr/colorPrimary" />
+
             <TextView
                 android:id="@+id/echo_text"
                 android:layout_width="wrap_content"

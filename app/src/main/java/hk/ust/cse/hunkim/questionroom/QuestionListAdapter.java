@@ -58,18 +58,30 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
         // Map a Chat object to an entry in our listview
         int echo = question.getEcho();
         ImageView echoButton = (ImageView) view.findViewById(R.id.echo);
+        ImageView echoButtonDown = (ImageView) view.findViewById(R.id.echoDown);
         TextView echoText = (TextView) view.findViewById(R.id.echo_text);
         echoText.setText("" + echo);
 
-
         echoButton.setTag(question.getKey()); // Set tag for button
-
         echoButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         QuestionActivity m = (QuestionActivity) view.getContext();
-                        m.updateEcho((String) view.getTag());
+                        m.updateEcho((String) view.getTag(), 1,true);
+                    }
+                }
+
+        );
+
+
+        echoButtonDown.setTag(question.getKey()); // Set tag for button
+        echoButtonDown.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        QuestionActivity m = (QuestionActivity) view.getContext();
+                        m.updateEcho((String) view.getTag(),-1,false);
                     }
                 }
 
@@ -92,11 +104,14 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
         );
 
         // check if we already clicked
-        boolean clickable = !dbUtil.contains(question.getKey());
+        boolean clickable = !dbUtil.contains(question.getKey(),true);
+        boolean clickableB = !dbUtil.contains(question.getKey(),false);
 
-        echoButton.setClickable(clickable);
-        echoButton.setEnabled(clickable);
-        view.setClickable(clickable);
+        echoButton.setClickable(clickable&&clickableB);
+        echoButton.setEnabled(clickable&&clickableB);
+        echoButtonDown.setClickable(clickable&&clickableB);
+        echoButtonDown.setEnabled(clickable&&clickableB);
+        view.setClickable(clickable&&clickableB);
 
 
         // http://stackoverflow.com/questions/8743120/how-to-grey-out-a-button
@@ -105,6 +120,11 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
             echoButton.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
         } else {
             echoButton.setColorFilter(ContextCompat.getColor(activity, R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+        }
+        if (clickableB) {
+            echoButtonDown.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
+        } else {
+            echoButtonDown.setColorFilter(ContextCompat.getColor(activity, R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
         }
 
 

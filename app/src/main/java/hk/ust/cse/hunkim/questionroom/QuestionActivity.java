@@ -201,8 +201,8 @@ public class QuestionActivity extends AppCompatActivity {
         }
     }
 
-    public void updateEcho(String key) {
-        if (dbutil.contains(key)) {
+    public void updateEcho(String key, final int value, boolean echo) {
+        if (dbutil.contains(key,true)||dbutil.contains(key,false)) {
             Log.e("Dupkey", "Key is already in the DB!");
             return;
         }
@@ -215,7 +215,7 @@ public class QuestionActivity extends AppCompatActivity {
                         Long echoValue = (Long) dataSnapshot.getValue();
                         Log.e("Echo update:", "" + echoValue);
 
-                        echoRef.setValue(echoValue + 1);
+                        echoRef.setValue(echoValue + value);
                     }
 
                     @Override
@@ -244,7 +244,7 @@ public class QuestionActivity extends AppCompatActivity {
         );
 
         // Update SQLite DB
-        dbutil.put(key);
+        dbutil.put(key,echo);
     }
 
     public void Close(View view) {

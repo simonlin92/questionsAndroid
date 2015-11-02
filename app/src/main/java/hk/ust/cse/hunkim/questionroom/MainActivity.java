@@ -143,7 +143,7 @@ public class MainActivity extends ListActivity {
     }
 
     public void updateEcho(String key) {
-        if (dbutil.contains(key)) {
+        if (dbutil.contains(key,true)) {
             Log.e("Dupkey", "Key is already in the DB!");
             return;
         }
@@ -185,7 +185,7 @@ public class MainActivity extends ListActivity {
         );
 
         // Update SQLite DB
-        dbutil.put(key);
+        dbutil.put(key,true);
     }
 
     public void Close(View view) {

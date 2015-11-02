@@ -4,18 +4,18 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by hunkim on 7/15/15.
  */
 public class DBUtil {
     SQLiteOpenHelper helper;
-
     public DBUtil(SQLiteOpenHelper helper) {
         this.helper = helper;
     }
 
-    public long put(String key) {
+    public long put(String key,Boolean echo) {
 
         // Gets the data repository in write mode
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -23,22 +23,21 @@ public class DBUtil {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(DBHelper.KEY_NAME, key);
-
+        values.put(DBHelper.ECHO_NAME, echo.toString());
         return db.insert(
                 DBHelper.TABLE_NAME,
-                DBHelper.KEY_NAME,
+                null,
                 values);
     }
 
 
-    public boolean contains(String key) {
+    public boolean contains(String key, Boolean echo) {
         // Gets the data repository in write mode
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.rawQuery(
                 "SELECT 1 FROM " + DBHelper.TABLE_NAME +
                         " WHERE " + DBHelper.KEY_NAME +
-                        " = ?", new String[]{key});
-
+                        " = ? AND "+ DBHelper.ECHO_NAME +" = ?", new String[]{key,echo.toString()});
         boolean exists = c.moveToFirst();
         c.close();
         return exists;
