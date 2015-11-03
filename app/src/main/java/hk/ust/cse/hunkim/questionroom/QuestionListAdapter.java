@@ -32,7 +32,6 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
 
     // The mUsername for this client. We use this to indicate which messages originated from this user
     private String roomName;
-    private String sort_order;
     QuestionActivity activity;
 
     public QuestionListAdapter(Query ref, Activity activity, int layout, String roomName) {
@@ -42,10 +41,6 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
         assert (activity instanceof QuestionActivity);
 
         this.activity = (QuestionActivity) activity;
-    }
-
-    public void set_sort(String sort_str){
-        sort_order = sort_str;
     }
     /**
      * Bind an instance of the <code>Chat</code> class to our view. This method is called by <code>FirebaseListAdapter</code>
@@ -65,7 +60,6 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
         ImageView echoButtonDown = (ImageView) view.findViewById(R.id.echoDown);
         TextView echoText = (TextView) view.findViewById(R.id.echo_text);
         echoText.setText("" + echo);
-        question.setSort(sort_order);
 
         echoButton.setTag(question.getKey()); // Set tag for button
         echoButton.setOnClickListener(

@@ -40,6 +40,7 @@ public class QuestionActivity extends AppCompatActivity {
     public DBUtil getDbutil() {
         return dbutil;
     }
+    public static String sort_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class QuestionActivity extends AppCompatActivity {
         if(read_sort(this).equals("default")){
             save_sort("timestamp");
         }
+        sort_type=read_sort(this);
 
         Log.w("debug","Sort_type in onCreate: " + read_sort(this));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_question);
@@ -100,7 +102,8 @@ public class QuestionActivity extends AppCompatActivity {
         mChatListAdapter = new QuestionListAdapter(
                 mFirebaseRef.orderByChild(sort).limitToFirst(200),
                 this, R.layout.question, roomName);
-        mChatListAdapter.set_sort(sort);
+        save_sort(sort);
+        sort_type=sort;
         listView.setAdapter(mChatListAdapter);
 
         mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -147,7 +150,6 @@ public class QuestionActivity extends AppCompatActivity {
         mChatListAdapter = new QuestionListAdapter(
                 mFirebaseRef.orderByChild(read_sort(this)).limitToFirst(200),
                 this, R.layout.question, roomName);
-        mChatListAdapter.set_sort(read_sort(this));
         Log.w("debug","Sort_type: " + read_sort(this));
         listView.setAdapter(mChatListAdapter);
 

@@ -25,7 +25,6 @@ public class Question implements Comparable<Question> {
     private int echo;
     private int order;
     private boolean newQuestion;
-    private String sort_string;
 
     public enum sort_order {
         timestamp,
@@ -155,14 +154,6 @@ public class Question implements Comparable<Question> {
         this.key = key;
     }
 
-    public String getSort(){
-        return sort_string;
-    }
-
-    public void setSort(String sort_str){
-        sort_string=sort_str;
-    }
-
     /**
      * New one/high echo goes bottom
      * @param other other chat
@@ -179,7 +170,7 @@ public class Question implements Comparable<Question> {
             return this.newQuestion ? 1 : -1; // this is the winner
         }*/
 
-        sort_order currentSort = sort_order.valueOf(getSort());
+        sort_order currentSort = sort_order.valueOf(QuestionActivity.sort_type);
         switch(currentSort) {
             case timestamp:
                 if (other.timestamp == this.timestamp) {
