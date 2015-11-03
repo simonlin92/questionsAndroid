@@ -1,8 +1,8 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener{
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener,MenuItemCompat.OnActionExpandListener {
     private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
     private Firebase mFirebaseRef;
     private RecyclerView recyclerView;
@@ -84,6 +84,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         getMenuInflater().inflate(R.menu.base_menu, menu);
         final MenuItem item = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        MenuItemCompat.setOnActionExpandListener(item, this);
         searchView.setOnQueryTextListener(this);
         return true;
     }
@@ -128,6 +129,17 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return filteredRoomInfoList;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        ((AppBarLayout) findViewById(R.id.app_bar_layout)).setExpanded(false);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        return true;
     }
 
     private class RoomInfo{
@@ -198,7 +210,10 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         public void onBindViewHolder(RoomViewHolder holder, int position) {
             RoomInfo roomInfo = roomInfoList.get(position);
             holder.Name.setText(roomInfo.Name);
-            holder.Count.setText(String.valueOf(roomInfo.Count));
+            if(roomInfo.Count<=999)
+                holder.Count.setText(String.valueOf(roomInfo.Count));
+            else
+                holder.Count.setText("999+");
         }
 
         @Override
