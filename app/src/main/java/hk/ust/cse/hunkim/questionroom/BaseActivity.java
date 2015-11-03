@@ -56,6 +56,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         dataSet = new ArrayList<>();
+        inputDialog = new InputDialog(this);
 
         // TODO: Remove menu input
         // Get Room list from firebase and add them to dataSet
@@ -109,7 +110,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        inputDialog = new InputDialog(this);
         inputDialog.show();
     }
 

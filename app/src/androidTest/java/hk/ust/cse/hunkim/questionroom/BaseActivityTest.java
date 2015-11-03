@@ -103,7 +103,7 @@ public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActiv
         baseActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                baseActivity.getInputDialog().click();
+                baseActivity.getInputDialog().findViewById(R.id.textSubmit).performClick();
                 semaphore.release();
             }
         });
