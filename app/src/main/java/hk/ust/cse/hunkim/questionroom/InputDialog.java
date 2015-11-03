@@ -67,6 +67,10 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        click();
+    }
+
+    public void click(){
         if (textInputLayout.isErrorEnabled()) return;
         dismiss();
         Intent intent = new Intent(parent, QuestionActivity.class);
