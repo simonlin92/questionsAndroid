@@ -66,7 +66,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
                 for (DataSnapshot Snapshot : snapshot.getChildren()) {
                     dataSet.add(new RoomInfo(Snapshot.getKey(), (int) Snapshot.child("/questions").getChildrenCount()));
                 }
-                Collections.sort(dataSet, new listComparator());
+                Collections.sort(dataSet, new RoomInfoCountComparator(false));
                 adapter = new RoomListAdapter(new ArrayList<>(dataSet));
                 recyclerView.setAdapter(adapter);
             }
@@ -159,12 +159,19 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    class listComparator implements Comparator<RoomInfo> {
+    private class RoomInfoCountComparator implements Comparator<RoomInfo> {
+        private boolean isAscending;
+        RoomInfoCountComparator(){
+            this(true);
+        }
+        RoomInfoCountComparator(boolean isAscending){
+            this.isAscending=isAscending;
+        }
         @Override
         public int compare(RoomInfo lhs, RoomInfo rhs) {
             if (lhs.Count == rhs.Count)
                 return 0;
-            if (lhs.Count < rhs.Count)
+            if (lhs.Count > rhs.Count&&isAscending)
                 return 1;
             else
                 return -1;
