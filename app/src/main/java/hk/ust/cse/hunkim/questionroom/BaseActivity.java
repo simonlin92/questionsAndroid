@@ -3,7 +3,6 @@ package hk.ust.cse.hunkim.questionroom;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
@@ -29,13 +28,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener,MenuItemCompat.OnActionExpandListener {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
     private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
     private Firebase mFirebaseRef;
     private RecyclerView recyclerView;
-    private RoomAdapter adapter;
+    private RoomListAdapter adapter;
     private List<RoomInfo> dataSet;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
     private InputDialog inputDialog;
 
     @Override
@@ -46,7 +44,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
@@ -69,8 +66,8 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
                 for (DataSnapshot Snapshot : snapshot.getChildren()) {
                     dataSet.add(new RoomInfo(Snapshot.getKey(), (int) Snapshot.child("/questions").getChildrenCount()));
                 }
-                Collections.sort(dataSet,new listComparator());
-                adapter = new RoomAdapter(new ArrayList<>(dataSet));
+                Collections.sort(dataSet, new listComparator());
+                adapter = new RoomListAdapter(new ArrayList<>(dataSet));
                 recyclerView.setAdapter(adapter);
             }
 
@@ -79,6 +76,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.base_menu, menu);
@@ -95,13 +93,13 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             EnterRoom(query);
             return true;
         }
-        Snackbar.make(findViewById(R.id.root_layout),"Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.root_layout), "Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_SHORT).show();
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if(adapter==null)
+        if (adapter == null)
             return true;
         final List<RoomInfo> filteredModelList = filter(dataSet, newText);
         adapter.animateTo(filteredModelList);
@@ -114,8 +112,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         inputDialog.show();
     }
 
-    public InputDialog getInputDialog()
-    {
+    public InputDialog getInputDialog() {
         return this.inputDialog;
     }
 
@@ -142,7 +139,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    private class RoomInfo{
+    private class RoomInfo {
         public final String Name;
         public final int Count;
 
@@ -150,6 +147,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             this.Name = Name;
             this.Count = Count;
         }
+
         @Override
         public boolean equals(Object other) {
             if (other == null) return false;
@@ -161,12 +159,12 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    class listComparator implements Comparator<RoomInfo>{
+    class listComparator implements Comparator<RoomInfo> {
         @Override
         public int compare(RoomInfo lhs, RoomInfo rhs) {
-            if(lhs.Count==rhs.Count)
+            if (lhs.Count == rhs.Count)
                 return 0;
-            if (lhs.Count<rhs.Count)
+            if (lhs.Count < rhs.Count)
                 return 1;
             else
                 return -1;
@@ -179,108 +177,45 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> implements View.OnClickListener {
-        private List<RoomInfo> roomInfoList;
+    private class RoomListAdapter extends RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> implements View.OnClickListener {
 
-        public RoomAdapter(List<RoomInfo> roomInfoList) {
-            this.roomInfoList = roomInfoList;
-        }
-
-        public void flushFilter() {
-            roomInfoList = new ArrayList<>(dataSet);
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public void onClick(final View view) {
-            TextView Name = (TextView) view.findViewById(R.id.card_room_name);
-            EnterRoom(Name.getText().toString());
+        public RoomListAdapter(List<RoomInfo> list) {
+            super(list);
         }
 
         @Override
         public RoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.
-                    from(parent.getContext()).
-                    inflate(R.layout.card_room, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_room, parent, false);
             itemView.setOnClickListener(this);
             return new RoomViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(RoomViewHolder holder, int position) {
-            RoomInfo roomInfo = roomInfoList.get(position);
+            RoomInfo roomInfo = list.get(position);
             holder.Name.setText(roomInfo.Name);
-            if(roomInfo.Count<=999)
+            if (roomInfo.Count <= 999)
                 holder.Count.setText(String.valueOf(roomInfo.Count));
             else
                 holder.Count.setText("999+");
+
         }
 
         @Override
-        public int getItemCount() {
-            return roomInfoList.size();
+        public void onClick(View v) {
+            TextView Name = (TextView) v.findViewById(R.id.card_room_name);
+            EnterRoom(Name.getText().toString());
         }
+    }
 
-        public RoomInfo removeItem(int position) {
-            final RoomInfo roomInfo = roomInfoList.remove(position);
-            notifyItemRemoved(position);
-            return roomInfo;
-        }
+    private class RoomViewHolder extends RecyclerView.ViewHolder {
+        private final TextView Name;
+        private final TextView Count;
 
-        public void addItem(int position, RoomInfo model) {
-            roomInfoList.add(position, model);
-            notifyItemInserted(position);
-        }
-
-        public void moveItem(int fromPosition, int toPosition) {
-            final RoomInfo roomInfo = roomInfoList.remove(fromPosition);
-            roomInfoList.add(toPosition, roomInfo);
-            notifyItemMoved(fromPosition, toPosition);
-        }
-
-        public void animateTo(List<RoomInfo> roomInfo) {
-            applyAndAnimateRemovals(roomInfo);
-            applyAndAnimateAdditions(roomInfo);
-            applyAndAnimateMovedItems(roomInfo);
-        }
-
-        private void applyAndAnimateRemovals(List<RoomInfo> roomInfos) {
-            for (int i = roomInfoList.size() - 1; i >= 0; i--) {
-                final RoomInfo roomInfo = roomInfoList.get(i);
-                if (!roomInfos.contains(roomInfo)) {
-                    removeItem(i);
-                }
-            }
-        }
-
-        private void applyAndAnimateAdditions(List<RoomInfo> newModels) {
-            for (int i = 0, count = newModels.size(); i < count; i++) {
-                final RoomInfo roomInfo = newModels.get(i);
-                if (!roomInfoList.contains(roomInfo)) {
-                    addItem(i, roomInfo);
-                }
-            }
-        }
-
-        private void applyAndAnimateMovedItems(List<RoomInfo> roomInfos) {
-            for (int toPosition = roomInfos.size() - 1; toPosition >= 0; toPosition--) {
-                final RoomInfo roomInfo = roomInfos.get(toPosition);
-                final int fromPosition = roomInfoList.indexOf(roomInfo);
-                if (fromPosition >= 0 && fromPosition != toPosition) {
-                    moveItem(fromPosition, toPosition);
-                }
-            }
-        }
-
-        public class RoomViewHolder extends RecyclerView.ViewHolder {
-            private final TextView Name;
-            private final TextView Count;
-
-            public RoomViewHolder(View v) {
-                super(v);
-                Name = (TextView) v.findViewById(R.id.card_room_name);
-                Count = (TextView) v.findViewById(R.id.card_room_count);
-            }
+        public RoomViewHolder(View v) {
+            super(v);
+            Name = (TextView) v.findViewById(R.id.card_room_name);
+            Count = (TextView) v.findViewById(R.id.card_room_count);
         }
     }
 }
