@@ -19,62 +19,49 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
+import hk.ust.cse.hunkim.questionroom.firebase.FirebaseValueEventListener;
+
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
-    private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
-    private Firebase mFirebaseRef;
+    private FirebaseAdapter firebaseAdapter;
     private RecyclerView recyclerView;
     private RoomListAdapter adapter;
     private List<RoomInfo> dataSet;
     private InputDialog inputDialog;
+    private RoomInfoValueEventListener roomInfoValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_base);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
+        dataSet = new ArrayList<>();
+        adapter = new RoomListAdapter(new ArrayList<>(dataSet));
 
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        dataSet = new ArrayList<>();
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+
         inputDialog = new InputDialog(this);
+        roomInfoValueEventListener=new RoomInfoValueEventListener(adapter,dataSet);
+        roomInfoValueEventListener.setComparator(new RoomInfoCountComparator(false));
 
-        // TODO: Remove menu input
-        // Get Room list from firebase and add them to dataSet
-        // Firebase should able to update if new room is added same as question
-        // Call adapter.flushFilter(); after you update dataSet
-        mFirebaseRef = new Firebase(FIREBASE_URL);
-        mFirebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot Snapshot : snapshot.getChildren()) {
-                    dataSet.add(new RoomInfo(Snapshot.getKey(), (int) Snapshot.child("/questions").getChildrenCount()));
-                }
-                Collections.sort(dataSet, new RoomInfoCountComparator(false));
-                adapter = new RoomListAdapter(new ArrayList<>(dataSet));
-                recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
+        firebaseAdapter = new FirebaseAdapter(this);
+        firebaseAdapter.addValueEventListener(roomInfoValueEventListener);
     }
 
     @Override
@@ -120,7 +107,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         query = query.toLowerCase();
         final List<RoomInfo> filteredRoomInfoList = new ArrayList<>();
         for (RoomInfo model : roomInfos) {
-            final String text = model.Name.toLowerCase();
+            final String text = model.name.toLowerCase();
             if (text.contains(query)) {
                 filteredRoomInfoList.add(model);
             }
@@ -139,13 +126,35 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+
+    private void EnterRoom(String Name) {
+        Intent intent = new Intent(this, QuestionActivity.class);
+        intent.putExtra(QuestionActivity.ROOM_NAME, Name);
+        startActivity(intent);
+    }
+
+    //=====================================Private Class=====================================
+
+    private class RoomInfoValueEventListener extends FirebaseValueEventListener<RoomInfo, RoomViewHolder> {
+        private RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> adapter;
+
+        public RoomInfoValueEventListener(RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> adapter, List<RoomInfo> list) {
+            super(adapter, list);
+        }
+
+        @Override
+        protected RoomInfo changeData(DataSnapshot snapshot) {
+            return new RoomInfo(snapshot.getKey(), (int) snapshot.child("/questions").getChildrenCount());
+        }
+    }
+
     private class RoomInfo {
-        public final String Name;
-        public final int Count;
+        public final String name;
+        public final int count;
 
         public RoomInfo(String Name, int Count) {
-            this.Name = Name;
-            this.Count = Count;
+            this.name = Name;
+            this.count = Count;
         }
 
         @Override
@@ -154,34 +163,26 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
             if (other == this) return true;
             if (!(other instanceof RoomInfo)) return false;
             RoomInfo otherRoomInfo = (RoomInfo) other;
-            return Name.equals(otherRoomInfo.Name);
+            return name.equals(otherRoomInfo.name);
         }
     }
-
 
     private class RoomInfoCountComparator implements Comparator<RoomInfo> {
         private boolean isAscending;
-        RoomInfoCountComparator(){
-            this(true);
+
+        RoomInfoCountComparator(boolean isAscending) {
+            this.isAscending = isAscending;
         }
-        RoomInfoCountComparator(boolean isAscending){
-            this.isAscending=isAscending;
-        }
+
         @Override
         public int compare(RoomInfo lhs, RoomInfo rhs) {
-            if (lhs.Count == rhs.Count)
+            if (lhs.count == rhs.count)
                 return 0;
-            if (lhs.Count > rhs.Count&&isAscending)
-                return 1;
+            if (lhs.count < rhs.count)
+                return isAscending ? -1 : 1;
             else
-                return -1;
+                return isAscending ? 1 : -1;
         }
-    }
-
-    private void EnterRoom(String Name) {
-        Intent intent = new Intent(this, QuestionActivity.class);
-        intent.putExtra(QuestionActivity.ROOM_NAME, Name);
-        startActivity(intent);
     }
 
     private class RoomListAdapter extends RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> implements View.OnClickListener {
@@ -200,9 +201,9 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onBindViewHolder(RoomViewHolder holder, int position) {
             RoomInfo roomInfo = list.get(position);
-            holder.Name.setText(roomInfo.Name);
-            if (roomInfo.Count <= 999)
-                holder.Count.setText(String.valueOf(roomInfo.Count));
+            holder.Name.setText(roomInfo.name);
+            if (roomInfo.count <= 999)
+                holder.Count.setText(String.valueOf(roomInfo.count));
             else
                 holder.Count.setText("999+");
 

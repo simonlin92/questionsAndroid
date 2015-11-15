@@ -9,24 +9,41 @@ import com.firebase.client.ValueEventListener;
 
 public class FirebaseAdapter {
     public static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseio.com/";
-    private static Firebase firebase=null;
-    private Query query;
-    public FirebaseAdapter(AppCompatActivity activity,Query query) {
+    private Firebase firebase;
+    private Query query = null;
+
+    public FirebaseAdapter(AppCompatActivity activity) {
         Firebase.setAndroidContext(activity);
-        this.query=query;
+        firebase = new Firebase(FIREBASE_URL);
     }
 
-    public void addChildEventListener(ChildEventListener childEventListener){
-        query.addChildEventListener(childEventListener);
+    public void setQuery(Query query) {
+        this.query = query;
     }
 
-    public void addListenerForSingleValueEvent(ValueEventListener valueEventListener){
-        query.addListenerForSingleValueEvent(valueEventListener);
+    public void addChildEventListener(ChildEventListener childEventListener) {
+        if (query == null)
+            firebase.addChildEventListener(childEventListener);
+        else
+            query.addChildEventListener(childEventListener);
     }
 
-    public static Firebase getFirebase(){
-        if(firebase==null)
-            firebase = new Firebase(FIREBASE_URL);
+    public void addListenerForSingleValueEvent(ValueEventListener valueEventListener) {
+        if (query == null)
+            firebase.addListenerForSingleValueEvent(valueEventListener);
+        else
+            query.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    public void addValueEventListener(ValueEventListener valueEventListener){
+        if (query == null)
+            firebase.addValueEventListener(valueEventListener);
+        else
+            query.addValueEventListener(valueEventListener);
+
+    }
+
+    public Firebase getFirebase(){
         return firebase;
     }
 }
