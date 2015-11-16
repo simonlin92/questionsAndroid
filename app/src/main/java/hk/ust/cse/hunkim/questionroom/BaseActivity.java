@@ -23,8 +23,8 @@ import java.util.List;
 
 import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
 import hk.ust.cse.hunkim.questionroom.room.Room;
-import hk.ust.cse.hunkim.questionroom.room.RoomValueEventListener;
 import hk.ust.cse.hunkim.questionroom.room.RoomReplyCountComparator;
+import hk.ust.cse.hunkim.questionroom.room.RoomValueEventListener;
 
 public class BaseActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
     private RecyclerView recyclerView;

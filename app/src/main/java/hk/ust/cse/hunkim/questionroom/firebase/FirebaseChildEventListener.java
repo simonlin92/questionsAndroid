@@ -107,6 +107,8 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
 
     public void setComparator(Comparator<? super T> comparator) {
         this.comparator = comparator;
+        sortList();
+        adapter.animateTo(list);
     }
 
     public void setSort(boolean sort){
