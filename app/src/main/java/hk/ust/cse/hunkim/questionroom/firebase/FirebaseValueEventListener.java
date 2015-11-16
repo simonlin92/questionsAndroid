@@ -35,12 +35,12 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
     }
 
     @Override
-     public void onCancelled(FirebaseError firebaseError) {
+    public void onCancelled(FirebaseError firebaseError) {
 
     }
 
-    public void setComparator( Comparator<? super T> comparator){
-        this.comparator=comparator;
+    public void setComparator(Comparator<? super T> comparator) {
+        this.comparator = comparator;
     }
 
     protected abstract T changeData(DataSnapshot snapshot);

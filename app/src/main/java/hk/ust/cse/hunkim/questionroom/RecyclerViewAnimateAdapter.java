@@ -6,8 +6,9 @@ import java.util.List;
 
 public abstract class RecyclerViewAnimateAdapter<T, U extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<U> {
     protected List<T> list;
+
     public RecyclerViewAnimateAdapter(List<T> list) {
-        this.list=list;
+        this.list = list;
     }
 
     @Override

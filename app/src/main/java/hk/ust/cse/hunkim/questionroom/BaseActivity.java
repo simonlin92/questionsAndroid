@@ -18,22 +18,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
-
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
-import hk.ust.cse.hunkim.questionroom.firebase.FirebaseValueEventListener;
+import hk.ust.cse.hunkim.questionroom.room.Room;
+import hk.ust.cse.hunkim.questionroom.room.RoomValueEventListener;
+import hk.ust.cse.hunkim.questionroom.room.RoomReplyCountComparator;
 
-public class BaseActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
-    private FirebaseAdapter firebaseAdapter;
+public class BaseActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
     private RecyclerView recyclerView;
     private RoomListAdapter adapter;
-    private List<RoomInfo> dataSet;
+    private List<Room> dataSet;
     private InputDialog inputDialog;
-    private RoomInfoValueEventListener roomInfoValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +39,16 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(this);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inputDialog.show();
+            }
+        });
 
         dataSet = new ArrayList<>();
         adapter = new RoomListAdapter(new ArrayList<>(dataSet));
@@ -57,11 +60,11 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(adapter);
 
         inputDialog = new InputDialog(this);
-        roomInfoValueEventListener=new RoomInfoValueEventListener(adapter,dataSet);
-        roomInfoValueEventListener.setComparator(new RoomInfoCountComparator(false));
+        RoomValueEventListener<RoomViewHolder> roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
+        roomValueEventListener.setComparator(new RoomReplyCountComparator(false));
 
-        firebaseAdapter = new FirebaseAdapter(this);
-        firebaseAdapter.addValueEventListener(roomInfoValueEventListener);
+        FirebaseAdapter firebaseAdapter = new FirebaseAdapter(this);
+        firebaseAdapter.addValueEventListener(roomValueEventListener);
     }
 
     @Override
@@ -88,31 +91,26 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onQueryTextChange(String newText) {
         if (adapter == null)
             return true;
-        final List<RoomInfo> filteredModelList = filter(dataSet, newText);
+        final List<Room> filteredModelList = filter(dataSet, newText);
         adapter.animateTo(filteredModelList);
         recyclerView.scrollToPosition(0);
         return true;
-    }
-
-    @Override
-    public void onClick(View view) {
-        inputDialog.show();
     }
 
     public InputDialog getInputDialog() {
         return this.inputDialog;
     }
 
-    private List<RoomInfo> filter(List<RoomInfo> roomInfos, String query) {
+    private List<Room> filter(List<Room> rooms, String query) {
         query = query.toLowerCase();
-        final List<RoomInfo> filteredRoomInfoList = new ArrayList<>();
-        for (RoomInfo model : roomInfos) {
+        final List<Room> filteredRoomList = new ArrayList<>();
+        for (Room model : rooms) {
             final String text = model.name.toLowerCase();
             if (text.contains(query)) {
-                filteredRoomInfoList.add(model);
+                filteredRoomList.add(model);
             }
         }
-        return filteredRoomInfoList;
+        return filteredRoomList;
     }
 
     @Override
@@ -126,7 +124,6 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-
     private void EnterRoom(String Name) {
         Intent intent = new Intent(this, QuestionActivity.class);
         intent.putExtra(QuestionActivity.ROOM_NAME, Name);
@@ -134,60 +131,9 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //=====================================Private Class=====================================
+    private class RoomListAdapter extends RecyclerViewAnimateAdapter<Room, RoomViewHolder> implements View.OnClickListener {
 
-    private class RoomInfoValueEventListener extends FirebaseValueEventListener<RoomInfo, RoomViewHolder> {
-        private RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> adapter;
-
-        public RoomInfoValueEventListener(RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> adapter, List<RoomInfo> list) {
-            super(adapter, list);
-        }
-
-        @Override
-        protected RoomInfo changeData(DataSnapshot snapshot) {
-            return new RoomInfo(snapshot.getKey(), (int) snapshot.child("/questions").getChildrenCount());
-        }
-    }
-
-    private class RoomInfo {
-        public final String name;
-        public final int count;
-
-        public RoomInfo(String Name, int Count) {
-            this.name = Name;
-            this.count = Count;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (!(other instanceof RoomInfo)) return false;
-            RoomInfo otherRoomInfo = (RoomInfo) other;
-            return name.equals(otherRoomInfo.name);
-        }
-    }
-
-    private class RoomInfoCountComparator implements Comparator<RoomInfo> {
-        private boolean isAscending;
-
-        RoomInfoCountComparator(boolean isAscending) {
-            this.isAscending = isAscending;
-        }
-
-        @Override
-        public int compare(RoomInfo lhs, RoomInfo rhs) {
-            if (lhs.count == rhs.count)
-                return 0;
-            if (lhs.count < rhs.count)
-                return isAscending ? -1 : 1;
-            else
-                return isAscending ? 1 : -1;
-        }
-    }
-
-    private class RoomListAdapter extends RecyclerViewAnimateAdapter<RoomInfo, RoomViewHolder> implements View.OnClickListener {
-
-        public RoomListAdapter(List<RoomInfo> list) {
+        public RoomListAdapter(List<Room> list) {
             super(list);
         }
 
@@ -200,13 +146,9 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onBindViewHolder(RoomViewHolder holder, int position) {
-            RoomInfo roomInfo = list.get(position);
-            holder.Name.setText(roomInfo.name);
-            if (roomInfo.count <= 999)
-                holder.Count.setText(String.valueOf(roomInfo.count));
-            else
-                holder.Count.setText("999+");
-
+            Room room = list.get(position);
+            holder.Name.setText(room.name);
+            holder.Count.setText(room.questionCount <= 999 ? String.valueOf(room.questionCount) : "999+");
         }
 
         @Override
@@ -216,7 +158,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private class RoomViewHolder extends RecyclerView.ViewHolder {
+    private static class RoomViewHolder extends RecyclerView.ViewHolder {
         private final TextView Name;
         private final TextView Count;
 

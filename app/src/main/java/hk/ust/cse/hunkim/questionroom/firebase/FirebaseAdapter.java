@@ -35,7 +35,7 @@ public class FirebaseAdapter {
             query.addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public void addValueEventListener(ValueEventListener valueEventListener){
+    public void addValueEventListener(ValueEventListener valueEventListener) {
         if (query == null)
             firebase.addValueEventListener(valueEventListener);
         else
@@ -43,7 +43,7 @@ public class FirebaseAdapter {
 
     }
 
-    public Firebase getFirebase(){
+    public Firebase getFirebase() {
         return firebase;
     }
 }
