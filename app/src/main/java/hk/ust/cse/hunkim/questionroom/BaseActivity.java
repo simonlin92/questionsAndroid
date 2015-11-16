@@ -70,6 +70,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         getMenuInflater().inflate(R.menu.base_menu, menu);
         searchItem = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint("Enter Room Name");
         MenuItemCompat.setOnActionExpandListener(searchItem, this);
         searchView.setOnQueryTextListener(this);
         return true;
