@@ -69,6 +69,7 @@ public class QuestionActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
+        questionSort = new QuestionSort(this);
         questionChildEventListener.setComparator(questionSort.readSort());
 
         firebaseAdapter = new FirebaseAdapter(this);
@@ -89,7 +90,6 @@ public class QuestionActivity extends AppCompatActivity {
 
         // get the DB Helper
         dbutil = new DBUtil(new DBHelper(this));
-        questionSort = new QuestionSort(this);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class QuestionActivity extends AppCompatActivity {
             holder.echoDown.setColorFilter(ContextCompat.getColor(getApplicationContext(),
                     echoDownclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             if (question.getDesc().isEmpty())
-                holder.content.setVisibility(View.INVISIBLE);
+                holder.content.setVisibility(View.GONE);
             else
                 holder.content.setText(question.getDesc());
             holder.echo.setText(question.getEcho() + "");
