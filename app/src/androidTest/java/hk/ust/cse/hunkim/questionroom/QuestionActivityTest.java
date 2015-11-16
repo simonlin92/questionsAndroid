@@ -2,7 +2,6 @@ package hk.ust.cse.hunkim.questionroom;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,7 +32,7 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
     private void build()
     {
         sendButton = (ImageView) getActivity().findViewById(R.id.sendButton);
-        questionListView = (ListView) getActivity().findViewById(R.id.question_list);
+        //questionListView = (ListView) getActivity().findViewById(R.id.question_list);
         inputField = (EditText) getActivity().findViewById(R.id.messageInput);
     }
 
@@ -68,7 +67,7 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                getQuestionView(targetPosition).findViewById(R.id.echo).performClick();
+                getQuestionView(targetPosition).findViewById(R.id.echoUp).performClick();
             }
         });
         getInstrumentation().waitForIdleSync();
@@ -119,7 +118,7 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
                 assertNotNull("Last question is available", questionView);
                 headView = (TextView) questionView.findViewById(R.id.Question_Title);
                 assertNotNull("Question head is available", headView);
-                descView = (TextView) questionView.findViewById(R.id.head_desc);
+                descView = (TextView) questionView.findViewById(R.id.Question_Content);
                 assertNotNull("Question description is available", descView);
             }
         }));

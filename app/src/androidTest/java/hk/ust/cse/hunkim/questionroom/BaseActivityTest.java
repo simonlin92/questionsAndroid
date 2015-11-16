@@ -99,15 +99,6 @@ public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActiv
         try{Thread.sleep(1000);}catch(Exception e){};
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(QuestionActivity.class.getName(), null, false);
 
-        try{semaphore.acquire();}catch(Exception e){};
-        baseActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                baseActivity.getInputDialog().findViewById(R.id.textSubmit).performClick();
-                semaphore.release();
-            }
-        });
-
         try{Thread.sleep(1000);}catch(Exception e){};
         QuestionActivity questionActivity = (QuestionActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,2000);
         try{Thread.sleep(1000);}catch(Exception e){};

@@ -1,22 +1,21 @@
 package hk.ust.cse.hunkim.questionroom;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.DataSetObserver;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -24,195 +23,119 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hk.ust.cse.hunkim.questionroom.db.DBHelper;
 import hk.ust.cse.hunkim.questionroom.db.DBUtil;
+import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
 import hk.ust.cse.hunkim.questionroom.question.Question;
+import hk.ust.cse.hunkim.questionroom.question.QuestionChildEventListener;
+import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
 
 public class QuestionActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "Room_name";
-
-    private static final String FIREBASE_URL = "https://flickering-torch-4928.firebaseIO.com/";
-    private String roomName;
-    private Firebase mFirebaseRef;
-    private ValueEventListener mConnectedListener;
-    private QuestionListAdapter mChatListAdapter;
-    private DBUtil dbutil;
-    public DBUtil getDbutil() {
-        return dbutil;
-    }
     public static String sort_type;
+    private DBUtil dbutil;
+    private FirebaseAdapter firebaseAdapter;
+    private QuestionSort questionSort;
+    private QuestionChildEventListener<QuestionViewHolder> questionChildEventListener;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
-        //initialized once with an Android context.
-        Firebase.setAndroidContext(this);
-        //initialized the sort_type
-        if(read_sort(this).equals("default")){
-            save_sort("timestamp");
-        }
-        sort_type=read_sort(this);
 
-        Log.w("debug","Sort_type in onCreate: " + read_sort(this));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_question);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         assert (intent != null);
-        roomName = intent.getStringExtra(QuestionActivity.ROOM_NAME);
+
+        String roomName = intent.getStringExtra(QuestionActivity.ROOM_NAME);
         if (roomName == null || roomName.length() == 0) {
             roomName = "all";
         }
         setTitle("Room name: " + roomName);
 
-        // Setup our Firebase mFirebaseRef
-        mFirebaseRef = new Firebase(FIREBASE_URL).child(roomName).child("questions");
+        List<Question> dataSet = new ArrayList<>();
+        QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
 
-        // Setup our input methods. Enter key on the keyboard or pushing the send button
+        questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
+        questionSort = new QuestionSort(this);
+        questionChildEventListener.setComparator(questionSort.readSort());
+
+        firebaseAdapter = new FirebaseAdapter(this);
+        firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("questions"));
+        firebaseAdapter.addChildEventListener(questionChildEventListener);
+
         findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage();
+                EditText inputText = (EditText) findViewById(R.id.messageInput);
+                String input = inputText.getText().toString();
+                if (!input.equals("")) {
+                    sendMessage(new Question(input));
+                    inputText.setText("");
+                }
             }
         });
 
         // get the DB Helper
-        DBHelper mDbHelper = new DBHelper(this);
-        dbutil = new DBUtil(mDbHelper);
-    }
-
-    //Save and read the data from the SharedPreferences
-    public void save_sort(String choice){
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("sort_choice", choice);
-        editor.apply();
-    }
-
-    public static String read_sort(Activity activity){
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        String string_temp = sharedPref.getString("sort_choice", "default");
-        return string_temp;
-    }
-
-    public void setSort(String sort){
-        final ListView listView = (ListView) findViewById(R.id.question_list);
-        mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild(sort).limitToFirst(200),
-                this, R.layout.question, roomName);
-        save_sort(sort);
-        sort_type=sort;
-        listView.setAdapter(mChatListAdapter);
-
-        mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                listView.setSelection(mChatListAdapter.getCount() - 1);
-            }
-        });
+        dbutil = new DBUtil(new DBHelper(this));
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(0, 0, 0,"Latest");
-        menu.add(0,1,0,"Most Likes");
+        menu.add(0, 0, 0, "Most Likes");
+        menu.add(0, 1, 0, "Least Likes");
         return true;
     }
 
     //According to the menu choice, turn to its sort type
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case 0:
-                save_sort("timestamp");break;
+                questionSort.saveSort(QuestionSort.Order.ECHO_DESC);
+                break;
             case 1:
-                save_sort("echo");break;
+                questionSort.saveSort(QuestionSort.Order.ECHO_ASC);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-        Log.w("debug", "Sort_type switch: " + read_sort(this));
-        setSort(read_sort(this));
+        questionChildEventListener.setComparator(questionSort.readSort());
+        scrollToTop();
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // Setup our view and list adapter. Ensure it scrolls to the bottom as data changes
-        final ListView listView = (ListView) findViewById(R.id.question_list);
-        // Tell our list adapter that we only want 200 messages at a time
-        mChatListAdapter = new QuestionListAdapter(
-                mFirebaseRef.orderByChild(read_sort(this)).limitToFirst(200),
-                this, R.layout.question, roomName);
-        Log.w("debug","Sort_type: " + read_sort(this));
-        listView.setAdapter(mChatListAdapter);
-
-        mChatListAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                listView.setSelection(mChatListAdapter.getCount() - 1);
-            }
-        });
-
-        // Finally, a little indication of connection status
-        mConnectedListener = mFirebaseRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = (Boolean) dataSnapshot.getValue();
-                if (connected) {
-                    Snackbar.make(findViewById(R.id.question_root), "Connected to Firebase", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    Snackbar.make(findViewById(R.id.question_root), "Disconnected from Firebase", Snackbar.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                // No-op
-            }
-        });
+    public void sendMessage(Question question) {
+        firebaseAdapter.getFirebase().push().setValue(question);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        mFirebaseRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
-        mChatListAdapter.cleanup();
-    }
-
-    private void sendMessage() {
-        EditText inputText = (EditText) findViewById(R.id.messageInput);
-        String input = inputText.getText().toString();
-        if (!input.equals("")) {
-            // Create our 'model', a Chat object
-            Question question = new Question(input);
-            // Create a new, auto-generated child of that chat location, and save our chat data there
-            mFirebaseRef.push().setValue(question);
-            inputText.setText("");
-        }
-    }
 
     public void updateEcho(String key, final int value, boolean echo) {
-        if (dbutil.contains(key,true)||dbutil.contains(key,false)) {
+        if (dbutil.contains(key, true) || dbutil.contains(key, false)) {
             Log.e("Dupkey", "Key is already in the DB!");
             return;
         }
 
-        final Firebase echoRef = mFirebaseRef.child(key).child("echo");
+        final Firebase echoRef = firebaseAdapter.getFirebase().child(key).child("echo");
         echoRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Long echoValue = (Long) dataSnapshot.getValue();
                         Log.e("Echo update:", "" + echoValue);
-
                         echoRef.setValue(echoValue + value);
                     }
 
@@ -223,29 +146,87 @@ public class QuestionActivity extends AppCompatActivity {
                 }
         );
 
-        final Firebase orderRef = mFirebaseRef.child(key).child("order");
-        orderRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Long orderValue = (Long) dataSnapshot.getValue();
-                        Log.e("Order update:", "" + orderValue);
-
-                        orderRef.setValue(orderValue - 1);
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                }
-        );
-
         // Update SQLite DB
-        dbutil.put(key,echo);
+        dbutil.put(key, echo);
     }
 
-    public void Close(View view) {
-        finish();
+    public void scrollToTop(){
+        recyclerView.scrollToPosition(0);
+    }
+
+    //=====================================Private Class=====================================
+    private class QuestionListAdapter extends RecyclerViewAnimateAdapter<Question, QuestionViewHolder> {
+        public QuestionListAdapter(List<Question> list) {
+            super(list);
+        }
+
+        @Override
+        public QuestionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.question, parent, false);
+            return new QuestionViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(QuestionViewHolder holder, int position) {
+            Question question = list.get(position);
+            holder.title.setText(question.getHead());
+            holder.newImage.setVisibility(question.isNewQuestion() ? View.VISIBLE : View.GONE);
+
+
+            boolean echoUpclickable = !dbutil.contains(question.getKey(), true);
+            boolean echoDownclickable = !dbutil.contains(question.getKey(), false);
+
+            holder.echoUp.setTag(question.getKey());
+            holder.echoUp.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            updateEcho((String) view.getTag(), 1, true);
+                        }
+                    }
+            );
+
+            holder.echoDown.setTag(question.getKey());
+            holder.echoDown.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            updateEcho((String) view.getTag(), -1, false);
+                        }
+                    }
+            );
+            holder.echoUp.setClickable(echoUpclickable && echoDownclickable);
+            holder.echoUp.setEnabled(echoUpclickable && echoDownclickable);
+            holder.echoDown.setClickable(echoUpclickable && echoDownclickable);
+            holder.echoDown.setEnabled(echoUpclickable && echoDownclickable);
+            holder.echoUp.setColorFilter(ContextCompat.getColor(getApplicationContext(),
+                    echoUpclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+            holder.echoDown.setColorFilter(ContextCompat.getColor(getApplicationContext(),
+                    echoDownclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+            if (question.getDesc().isEmpty())
+                holder.content.setVisibility(View.GONE);
+            else
+                holder.content.setText(question.getDesc());
+            holder.echo.setText(question.getEcho() + "");
+        }
+    }
+
+    private static class QuestionViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView newImage;
+        private final ImageView echoUp;
+        private final ImageView echoDown;
+        private final TextView title;
+        private final TextView content;
+        private final TextView echo;
+
+        public QuestionViewHolder(View v) {
+            super(v);
+            newImage = (ImageView) v.findViewById(R.id.Question_New);
+            echoUp = (ImageView) v.findViewById(R.id.echoUp);
+            echoDown = (ImageView) v.findViewById(R.id.echoDown);
+            title = (TextView) v.findViewById(R.id.Question_Title);
+            content = (TextView) v.findViewById(R.id.Question_Content);
+            echo = (TextView) v.findViewById(R.id.echo);
+        }
     }
 }
