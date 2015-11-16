@@ -97,6 +97,8 @@ public class QuestionActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         menu.add(0, 0, 0, "Most Likes");
         menu.add(0, 1, 0, "Least Likes");
+        menu.add(0, 2, 0, "Most Recent");
+        menu.add(0, 3, 0, "Old");
         return true;
     }
 
@@ -109,6 +111,12 @@ public class QuestionActivity extends AppCompatActivity {
                 break;
             case 1:
                 questionSort.saveSort(QuestionSort.Order.ECHO_ASC);
+                break;
+            case 2:
+                questionSort.saveSort(QuestionSort.Order.TIME_DESC);
+                break;
+            case 3:
+                questionSort.saveSort(QuestionSort.Order.TIME_ASC);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
