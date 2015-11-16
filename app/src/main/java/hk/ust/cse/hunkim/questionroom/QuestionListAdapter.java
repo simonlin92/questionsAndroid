@@ -1,15 +1,9 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
-import android.text.Html;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,9 +50,9 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
 
         // Map a Chat object to an entry in our listview
         int echo = question.getEcho();
-        ImageView echoButton = (ImageView) view.findViewById(R.id.echo);
+        ImageView echoButton = (ImageView) view.findViewById(R.id.echoUp);
         ImageView echoButtonDown = (ImageView) view.findViewById(R.id.echoDown);
-        TextView echoText = (TextView) view.findViewById(R.id.echo_text);
+        TextView echoText = (TextView) view.findViewById(R.id.echo);
         echoText.setText("" + echo);
 
         echoButton.setTag(question.getKey()); // Set tag for button
@@ -67,7 +61,7 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
                     @Override
                     public void onClick(View view) {
                         QuestionActivity m = (QuestionActivity) view.getContext();
-                        m.updateEcho((String) view.getTag(), 1, true);
+                        //m.updateEcho((String) view.getTag(), 1, true);
                     }
                 }
 
@@ -80,23 +74,22 @@ public class QuestionListAdapter extends FirebaseListAdapter<Question> {
                     @Override
                     public void onClick(View view) {
                         QuestionActivity m = (QuestionActivity) view.getContext();
-                        m.updateEcho((String) view.getTag(), -1, false);
+                        //m.updateEcho((String) view.getTag(), -1, false);
                     }
                 }
 
         );
 
-        question.updateNewQuestion();
         if(!question.isNewQuestion())
             view.findViewById(R.id.Question_New).setVisibility(View.GONE);
         else
             view.findViewById(R.id.Question_New).setVisibility(View.VISIBLE);
         ((TextView) view.findViewById(R.id.Question_Title)).setText(question.getHead().replace("\n", ""));
-        ((TextView) view.findViewById(R.id.head_desc)).setText(question.getDesc());
+        ((TextView) view.findViewById(R.id.Question_Content)).setText(question.getDesc());
         if(question.getDesc().isEmpty())
-            view.findViewById(R.id.head_desc).setVisibility(View.GONE);
+            view.findViewById(R.id.Question_Content).setVisibility(View.GONE);
         else
-            view.findViewById(R.id.head_desc).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.Question_Content).setVisibility(View.VISIBLE);
         view.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

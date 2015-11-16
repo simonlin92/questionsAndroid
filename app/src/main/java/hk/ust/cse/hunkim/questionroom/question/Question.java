@@ -50,6 +50,7 @@ public class Question implements Comparable<Question> {
 
     /**
      * Set question from a String message
+     *
      * @param message string message
      */
     public Question(String message) {
@@ -57,8 +58,8 @@ public class Question implements Comparable<Question> {
         this.echo = 0;
         this.head = getFirstSentence(message).trim();
         this.desc = "";
-        if (this.head.length()+1 < message.length()) {
-            this.desc = message.substring(this.head.length()+1);
+        if (this.head.length() + 1 < message.length()) {
+            this.desc = message.substring(this.head.length() + 1);
         }
 
         // get the last char
@@ -69,6 +70,7 @@ public class Question implements Comparable<Question> {
 
     /**
      * Get first sentence from a message
+     *
      * @param message
      * @return
      */
@@ -94,7 +96,7 @@ public class Question implements Comparable<Question> {
             return message;
         }
 
-        return message.substring(0, index+1);
+        return message.substring(0, index + 1);
     }
 
     /* -------------------- Getters ------------------- */
@@ -139,10 +141,11 @@ public class Question implements Comparable<Question> {
     }
 
     public boolean isNewQuestion() {
+        updateNewQuestion();
         return newQuestion;
     }
 
-    public void updateNewQuestion() {
+    private void updateNewQuestion() {
         newQuestion = this.timestamp > new Date().getTime() - 180000;
     }
 
@@ -156,6 +159,7 @@ public class Question implements Comparable<Question> {
 
     /**
      * New one/high echo goes bottom
+     *
      * @param other other chat
      * @return order
      */
@@ -171,7 +175,7 @@ public class Question implements Comparable<Question> {
         }*/
 
         sort_order currentSort = sort_order.valueOf(QuestionActivity.sort_type);
-        switch(currentSort) {
+        switch (currentSort) {
             case timestamp:
                 if (other.timestamp == this.timestamp) {
                     return 0;
@@ -199,8 +203,8 @@ public class Question implements Comparable<Question> {
         if (!(o instanceof Question)) {
             return false;
         }
-        Question other = (Question)o;
-        return key.equals(other.key);
+        Question other = (Question) o;
+        return key.equals(other.key) && echo == other.echo;
     }
 
     @Override

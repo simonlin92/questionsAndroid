@@ -51,7 +51,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         });
 
         dataSet = new ArrayList<>();
-        adapter = new RoomListAdapter(new ArrayList<>(dataSet));
+        adapter = new RoomListAdapter(new ArrayList<Room>());
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -17,6 +17,7 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
     private RecyclerViewAnimateAdapter<T, U> adapter;
     private List<T> list;
     private Comparator<? super T> comparator = null;
+    private boolean sort = true;
 
     public FirebaseValueEventListener(RecyclerViewAnimateAdapter<T, U> adapter, List<T> list) {
         this.adapter = adapter;
@@ -29,7 +30,7 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
             list.add(changeData(snapshot));
         }
-        if (comparator != null)
+        if (comparator != null && sort)
             Collections.sort(list, comparator);
         adapter.animateTo(list);
     }
@@ -41,6 +42,10 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
 
     public void setComparator(Comparator<? super T> comparator) {
         this.comparator = comparator;
+    }
+
+    public void setSort(boolean sort) {
+        this.sort = sort;
     }
 
     protected abstract T changeData(DataSnapshot snapshot);

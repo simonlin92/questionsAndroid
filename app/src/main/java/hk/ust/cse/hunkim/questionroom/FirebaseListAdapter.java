@@ -34,7 +34,7 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
     private Class<T> mModelClass;
     private int mLayout;
     private LayoutInflater mInflater;
-    private List<T> mModels;
+    private List<T> mModels = new ArrayList<T>();
     private Map<String, T> mModelKeys;
     private ChildEventListener mListener;
 
@@ -51,8 +51,7 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
         this.mModelClass = mModelClass;
         this.mLayout = mLayout;
         mInflater = activity.getLayoutInflater();
-        mModels = new ArrayList<T>();
-        mModelKeys = new HashMap<String, T>();
+        mModelKeys = new HashMap<>();
 
         // Look for all child events. We will then map them to our own internal ArrayList, which backs ListView
         mListener = this.mRef.addChildEventListener(new ChildEventListener() {
@@ -66,9 +65,6 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
 
                 // TOFIX: Any easy way to ser key?
                 setKey(modelName, model);
-
-                // bug seeded
-                // mModels.add(-1, model);
 
                 // Insert into the correct location, based on previousChildName
                 if (previousChildName == null) {
