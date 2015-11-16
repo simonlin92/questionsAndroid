@@ -30,7 +30,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
     private RecyclerView recyclerView;
     private RoomListAdapter adapter;
     private List<Room> dataSet;
-    private InputDialog inputDialog;
+    private MenuItem searchItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inputDialog.show();
+                searchItem.expandActionView();
             }
         });
 
@@ -54,12 +54,10 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         adapter = new RoomListAdapter(new ArrayList<>(dataSet));
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        inputDialog = new InputDialog(this);
         RoomValueEventListener<RoomViewHolder> roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
         roomValueEventListener.setComparator(new RoomReplyCountComparator(false));
 
@@ -70,20 +68,20 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.base_menu, menu);
-        final MenuItem item = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        MenuItemCompat.setOnActionExpandListener(item, this);
+        searchItem = menu.findItem(R.id.menu_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        MenuItemCompat.setOnActionExpandListener(searchItem, this);
         searchView.setOnQueryTextListener(this);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if (InputDialog.isEmailValid(query)) {
+        if (Room.isNameValid(query)) {
             EnterRoom(query);
             return true;
         }
-        Snackbar.make(findViewById(R.id.root_layout), "Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.root_layout), "Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_LONG).show();
         return false;
     }
 
@@ -95,10 +93,6 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         adapter.animateTo(filteredModelList);
         recyclerView.scrollToPosition(0);
         return true;
-    }
-
-    public InputDialog getInputDialog() {
-        return this.inputDialog;
     }
 
     private List<Room> filter(List<Room> rooms, String query) {

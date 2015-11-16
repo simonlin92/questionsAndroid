@@ -17,4 +17,8 @@ public class Room {
         Room otherRoom = (Room) other;
         return name.equals(otherRoom.name);
     }
+
+    public static boolean isNameValid(String roomName) {
+        return !roomName.matches("^.*[^a-zA-Z0-9 ].*$");
+    }
 }

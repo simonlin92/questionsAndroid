@@ -44,6 +44,4 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
     }
 
     protected abstract T changeData(DataSnapshot snapshot);
-
-
 }
