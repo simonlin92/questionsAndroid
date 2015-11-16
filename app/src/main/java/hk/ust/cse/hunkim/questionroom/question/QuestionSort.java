@@ -29,6 +29,10 @@ public class QuestionSort {
 
     private Comparator<? super Question> getComparator(Order sort) {
         switch (sort) {
+            case TIME_ASC:
+                return new QuestionTimestampComparator(true);
+            case TIME_DESC:
+                return new QuestionTimestampComparator(false);
             case ECHO_DESC:
                 return new QuestionEchoComparator(false);
             case ECHO_ASC:
@@ -46,7 +50,7 @@ public class QuestionSort {
     }
 
     public enum Order {
-        ECHO_ASC(0), ECHO_DESC(1);
+        ECHO_ASC(0), ECHO_DESC(1), TIME_ASC(2), TIME_DESC(3) ;
 
         private final int value;
 
