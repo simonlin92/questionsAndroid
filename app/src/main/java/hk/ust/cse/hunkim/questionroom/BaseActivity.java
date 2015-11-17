@@ -1,19 +1,15 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private final Handler handler = new Handler();
-    private static final long DRAWER_CLOSE_DELAY_MS = 250;
-    private int navItemId = 0;
+    private int navItemId=0;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
@@ -28,6 +24,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             Fragment newFragment = new RoomListFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.main_fragment, newFragment).commit();
+            navItemId=R.id.menu_roomlist;
         }
         navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(false);
     }
@@ -38,19 +35,17 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         if (navItemId != 0)
             navigationView.getMenu().findItem(navItemId).setChecked(false);
         fragmentTransaction(new QuestionFragment(), bundle);
+        navItemId=0;
     }
 
     @Override
     public boolean onNavigationItemSelected(final MenuItem menuItem) {
         menuItem.setChecked(true);
-        navItemId = menuItem.getItemId();
-        drawerLayout.closeDrawer(GravityCompat.START);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                navigate(menuItem.getItemId());
-            }
-        }, DRAWER_CLOSE_DELAY_MS);
+        if (navItemId != menuItem.getItemId()) {
+            navItemId = menuItem.getItemId();
+            navigate(menuItem.getItemId());
+            drawerLayout.closeDrawers();
+        }
         return true;
     }
 
@@ -64,7 +59,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     private void fragmentTransaction(Fragment fragment, Bundle bundle) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_l2r, R.anim.slide_out_l2r, R.anim.slide_in_r2l, R.anim.slide_out_r2l);
         if (bundle != null)
             fragment.setArguments(bundle);
         transaction.replace(R.id.main_fragment, fragment);

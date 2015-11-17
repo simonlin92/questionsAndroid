@@ -216,11 +216,8 @@ public class QuestionFragment extends Fragment {
             Question question = list.get(position);
             holder.title.setText(question.getHead());
             holder.newImage.setVisibility(question.isNewQuestion() ? View.VISIBLE : View.GONE);
-
-
-            boolean echoUpclickable = !dbutil.contains(question.getKey(), true);
-            boolean echoDownclickable = !dbutil.contains(question.getKey(), false);
-
+            boolean echoUpClickable = !dbutil.contains(question.getKey(), true);
+            boolean echoDownClickable = !dbutil.contains(question.getKey(), false);
             holder.echoUp.setTag(question.getKey());
             holder.echoUp.setOnClickListener(
                     new View.OnClickListener() {
@@ -230,7 +227,6 @@ public class QuestionFragment extends Fragment {
                         }
                     }
             );
-
             holder.echoDown.setTag(question.getKey());
             holder.echoDown.setOnClickListener(
                     new View.OnClickListener() {
@@ -240,14 +236,14 @@ public class QuestionFragment extends Fragment {
                         }
                     }
             );
-            holder.echoUp.setClickable(echoUpclickable && echoDownclickable);
-            holder.echoUp.setEnabled(echoUpclickable && echoDownclickable);
-            holder.echoDown.setClickable(echoUpclickable && echoDownclickable);
-            holder.echoDown.setEnabled(echoUpclickable && echoDownclickable);
+            holder.echoUp.setClickable(echoUpClickable && echoDownClickable);
+            holder.echoUp.setEnabled(echoUpClickable && echoDownClickable);
+            holder.echoDown.setClickable(echoUpClickable && echoDownClickable);
+            holder.echoDown.setEnabled(echoUpClickable && echoDownClickable);
             holder.echoUp.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
-                    echoUpclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    echoUpClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             holder.echoDown.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
-                    echoDownclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    echoDownClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             if (question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
             else {

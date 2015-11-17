@@ -167,7 +167,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
 
     private void randomLogo() {
         ImageView logo = (ImageView) findViewById(R.id.base_logo);
-        int[] logoID = new int[]{R.drawable.l1, R.drawable.l2};
+        int[] logoID = new int[]{R.drawable.l1, R.drawable.l2, R.drawable.l3, R.drawable.l4, R.drawable.l5, R.drawable.l6};
         Random rand = new Random();
         logo.setImageResource(logoID[rand.nextInt(logoID.length)]);
     }
