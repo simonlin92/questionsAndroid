@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_test"
-        android:icon="@drawable/ic_send_black_24dp"
-        android:title="@string/app_name"/>
+        android:id="@+id/menu_roomlist"
+        android:icon="@drawable/list"
+        android:title="Rooms List"/>
 </menu>
