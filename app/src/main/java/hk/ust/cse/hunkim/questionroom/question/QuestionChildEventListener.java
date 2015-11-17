@@ -32,11 +32,10 @@ public class QuestionChildEventListener<T extends RecyclerView.ViewHolder> exten
     @Override
     protected void onChildAfter(DataSnapshot dataSnapshot, State state)
     {
-        if(enableNotification) {
+        if(enableNotification && state == State.ADDED) {
             popUp();
             return;
         }
-
         switch(state){
             case ADDED: questionAddedCount++;break;
         }
