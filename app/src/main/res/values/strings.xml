@@ -13,5 +13,6 @@
     <string name="search_hint">Room Name</string>
     <string name="openDrawer">Open Drawer</string>
     <string name="closeDrawer">Close Drawer</string>
+    <string name="roomlist_banner">Banner</string>
 
 </resources>

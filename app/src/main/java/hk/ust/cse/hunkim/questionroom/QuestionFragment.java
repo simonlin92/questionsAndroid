@@ -1,9 +1,13 @@
 package hk.ust.cse.hunkim.questionroom;
 
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +38,7 @@ import hk.ust.cse.hunkim.questionroom.question.Question;
 import hk.ust.cse.hunkim.questionroom.question.QuestionChildEventListener;
 import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
 
-public class QuestionActivity extends AppCompatActivity {
+public class QuestionFragment extends Fragment {
     public static final String ROOM_NAME = "Room_name";
     public static String sort_type;
     private DBUtil dbutil;
@@ -41,38 +46,32 @@ public class QuestionActivity extends AppCompatActivity {
     private QuestionSort questionSort;
     private QuestionChildEventListener<QuestionViewHolder> questionChildEventListener;
     private RecyclerView recyclerView;
+    private CoordinatorLayout coordinatorLayout;
+    private String roomName;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_question, container, false);
+        setHasOptionsMenu(true);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_question);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initialToolbar();
+        initialDrawer();
 
-        Intent intent = getIntent();
-        assert (intent != null);
-
-        String roomName = intent.getStringExtra(QuestionActivity.ROOM_NAME);
-        if (roomName == null || roomName.length() == 0) {
-            roomName = "all";
-        }
-        setTitle(roomName);
+        Bundle bundle = getArguments();
+        roomName = bundle.getString(ROOM_NAME, "all");
 
         List<Question> dataSet = new ArrayList<>();
         QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
         questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
-        questionSort = new QuestionSort(this);
+        questionSort = new QuestionSort(getActivity());
         questionChildEventListener.setComparator(questionSort.readSort());
 
-        firebaseAdapter = new FirebaseAdapter(this);
+        firebaseAdapter = new FirebaseAdapter(getActivity());
         firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("questions"));
         firebaseAdapter.addChildEventListener(questionChildEventListener);
 
@@ -89,17 +88,23 @@ public class QuestionActivity extends AppCompatActivity {
         });
 
         // get the DB Helper
-        dbutil = new DBUtil(new DBHelper(this));
+        dbutil = new DBUtil(new DBHelper(getActivity()));
+        return coordinatorLayout;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
+    public void onStart() {
+        super.onStart();
+        getActivity().setTitle(roomName);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         menu.add(0, 0, 0, "Most Likes");
         menu.add(0, 1, 0, "Least Likes");
         menu.add(0, 2, 0, "Most Recent");
         menu.add(0, 3, 0, "Oldest");
-        return true;
     }
 
     //According to the menu choice, turn to its sort type
@@ -158,8 +163,40 @@ public class QuestionActivity extends AppCompatActivity {
         dbutil.put(key, echo);
     }
 
-    public void scrollToTop(){
+    public void scrollToTop() {
         recyclerView.scrollToPosition(0);
+    }
+
+    private void initialToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+    }
+
+    private View findViewById(int id) {
+        return coordinatorLayout.findViewById(id);
+    }
+
+    private void initialDrawer() {
+        DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
+                (Toolbar) findViewById(R.id.toolbar), R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
     }
 
     //=====================================Private Class=====================================
@@ -207,13 +244,13 @@ public class QuestionActivity extends AppCompatActivity {
             holder.echoUp.setEnabled(echoUpclickable && echoDownclickable);
             holder.echoDown.setClickable(echoUpclickable && echoDownclickable);
             holder.echoDown.setEnabled(echoUpclickable && echoDownclickable);
-            holder.echoUp.setColorFilter(ContextCompat.getColor(getApplicationContext(),
+            holder.echoUp.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
                     echoUpclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-            holder.echoDown.setColorFilter(ContextCompat.getColor(getApplicationContext(),
+            holder.echoDown.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
                     echoDownclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             if (question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
-            else{
+            else {
                 holder.content.setVisibility(View.VISIBLE);
                 holder.content.setText(question.getDesc());
             }

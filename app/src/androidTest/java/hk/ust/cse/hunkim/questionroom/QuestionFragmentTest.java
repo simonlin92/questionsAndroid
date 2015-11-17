@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import hk.ust.cse.hunkim.questionroom.question.Question;
 
-public class QuestionActivityTest extends ActivityInstrumentationTestCase2<QuestionActivity> {
+public class QuestionFragmentTest extends ActivityInstrumentationTestCase2<BaseActivity> {
 
     private TextView headView;
     private TextView descView;
@@ -19,8 +19,8 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
     private ImageView sendButton;
     private EditText inputField;
 
-    public QuestionActivityTest() {
-        super(QuestionActivity.class);
+    public QuestionFragmentTest() {
+        super(BaseActivity.class);
     }
 
     @Override
@@ -31,9 +31,9 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
 
     private void build()
     {
-        sendButton = (ImageView) getActivity().findViewById(R.id.sendButton);
+        //sendButton = (ImageView) getActivity().findViewById(R.id.sendButton);
         //questionListView = (ListView) getActivity().findViewById(R.id.question_list);
-        inputField = (EditText) getActivity().findViewById(R.id.messageInput);
+        //inputField = (EditText) getActivity().findViewById(R.id.messageInput);
     }
 
     @MediumTest
@@ -43,7 +43,7 @@ public class QuestionActivityTest extends ActivityInstrumentationTestCase2<Quest
         assertNotNull("Send button is available", sendButton);
         assertNotNull("Question view is available", questionListView);
         assertNotNull("Input field is available", inputField);
-        assertEquals("Correct room name ", "Room name: all", getActivity().getTitle());
+        //assertEquals("Correct room name ", "Room name: all", getActivity().getTitle());
     }
 
     @MediumTest
