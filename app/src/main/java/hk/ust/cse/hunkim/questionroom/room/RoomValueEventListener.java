@@ -18,4 +18,12 @@ public class RoomValueEventListener<T extends RecyclerView.ViewHolder> extends F
     protected Room changeData(DataSnapshot snapshot) {
         return new Room(snapshot.getKey(), (int) snapshot.child("/questions").getChildrenCount());
     }
+
+    public int getQuestionCount(String roomName)
+    {
+        for(int i=0;i<list.size();i++)
+            if(list.get(i).name.equals(roomName))
+                return list.get(i).questionCount;
+        return 0;
+    }
 }

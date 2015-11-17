@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -35,12 +36,14 @@ import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
 
 public class QuestionActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "Room_name";
+    public static final String QUESTION_COUNT = "Question_count";
     public static String sort_type;
     private DBUtil dbutil;
     private FirebaseAdapter firebaseAdapter;
     private QuestionSort questionSort;
     private QuestionChildEventListener<QuestionViewHolder> questionChildEventListener;
     private RecyclerView recyclerView;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,10 @@ public class QuestionActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        CharSequence text = "A new question received";
+        int duration = Toast.LENGTH_SHORT;
+        toast = Toast.makeText(getApplicationContext(), text, duration);
+
         Intent intent = getIntent();
         assert (intent != null);
 
@@ -61,6 +68,8 @@ public class QuestionActivity extends AppCompatActivity {
         }
         setTitle(roomName);
 
+        int questionCount = intent.getIntExtra(QuestionActivity.QUESTION_COUNT, 0);
+
         List<Question> dataSet = new ArrayList<>();
         QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -68,7 +77,7 @@ public class QuestionActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
+        questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet, toast ,questionCount);
         questionSort = new QuestionSort(this);
         questionChildEventListener.setComparator(questionSort.readSort());
 

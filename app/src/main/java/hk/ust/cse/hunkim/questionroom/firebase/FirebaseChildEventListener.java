@@ -15,6 +15,7 @@ import java.util.Map;
 import hk.ust.cse.hunkim.questionroom.RecyclerViewAnimateAdapter;
 
 public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewHolder> implements ChildEventListener {
+    public enum State{ADDED,CHANGED,REMOVED,MOVED};
     private RecyclerViewAnimateAdapter<T, U> adapter;
     private List<T> list;
     private Comparator<? super T> comparator = null;
@@ -50,6 +51,7 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
         }
         sortList();
         adapter.animateTo(list);
+        onChildAfter(dataSnapshot,State.ADDED);
     }
 
     @Override
@@ -64,6 +66,7 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
         keys.put(modelName, newModel);
         sortList();
         adapter.animateTo(list);
+        onChildAfter(dataSnapshot,State.CHANGED);
     }
 
     @Override
@@ -74,6 +77,7 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
         keys.remove(modelName);
         sortList();
         adapter.animateTo(list);
+        onChildAfter(dataSnapshot,State.REMOVED);
     }
 
     @Override
@@ -99,6 +103,7 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
         }
         sortList();
         adapter.animateTo(list);
+        onChildAfter(dataSnapshot,State.MOVED);
     }
 
     @Override
@@ -116,6 +121,8 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
     }
 
     protected abstract void setKey(String key, T model);
+
+    protected abstract void onChildAfter(DataSnapshot dataSnapshot, State state);
 
     private void sortList() {
         if (comparator != null&&sort)

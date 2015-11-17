@@ -15,7 +15,7 @@ import hk.ust.cse.hunkim.questionroom.RecyclerViewAnimateAdapter;
 
 public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewHolder> implements ValueEventListener {
     private RecyclerViewAnimateAdapter<T, U> adapter;
-    private List<T> list;
+    protected List<T> list;
     private Comparator<? super T> comparator = null;
     private boolean sort = true;
 

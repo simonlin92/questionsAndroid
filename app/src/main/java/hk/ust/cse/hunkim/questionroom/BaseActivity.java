@@ -35,6 +35,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
     private RoomListAdapter adapter;
     private List<Room> dataSet;
     private MenuItem searchItem;
+    private RoomValueEventListener<RoomViewHolder> roomValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        RoomValueEventListener<RoomViewHolder> roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
+        roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
         roomValueEventListener.setComparator(new RoomReplyCountComparator(false));
 
         FirebaseAdapter firebaseAdapter = new FirebaseAdapter(this);
@@ -81,7 +82,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (Room.isNameValid(query)) {
-            EnterRoom(query);
+            enterRoom(query);
             return true;
         }
         Snackbar.make(findViewById(R.id.root_layout), "Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_LONG).show();
@@ -127,9 +128,10 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         randomLogo();
     }
 
-    private void EnterRoom(String Name) {
+    private void enterRoom(String name) {
         Intent intent = new Intent(this, QuestionActivity.class);
-        intent.putExtra(QuestionActivity.ROOM_NAME, Name);
+        intent.putExtra(QuestionActivity.ROOM_NAME, name);
+        intent.putExtra(QuestionActivity.QUESTION_COUNT, roomValueEventListener.getQuestionCount(name));
         startActivity(intent);
     }
 
@@ -191,7 +193,7 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
         @Override
         public void onClick(View v) {
             TextView Name = (TextView) v.findViewById(R.id.card_room_name);
-            EnterRoom(Name.getText().toString());
+            enterRoom(Name.getText().toString());
         }
     }
 
