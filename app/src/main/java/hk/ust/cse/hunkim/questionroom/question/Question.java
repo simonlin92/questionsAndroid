@@ -54,18 +54,20 @@ public class Question implements Comparable<Question> {
      * @param message string message
      */
     public Question(String message) {
-        this.wholeMsg = message;
-        this.echo = 0;
-        this.head = getFirstSentence(message).trim();
-        this.desc = "";
-        if (this.head.length() + 1 < message.length()) {
-            this.desc = message.substring(this.head.length() + 1);
-        }
+        wholeMsg = message;
+        echo = 0;
+        head = getFirstSentence(message).trim();
+
+        if (head.length() + 1 < message.length())
+            desc = message.substring(head.length() + 1);
 
         // get the last char
-        this.headLastChar = head.substring(head.length() - 1);
+        if (head.length() > 0)
+            headLastChar = head.substring(head.length() - 1);
+        else
+            headLastChar = "";
 
-        this.timestamp = new Date().getTime();
+        timestamp = new Date().getTime();
     }
 
     /**
@@ -75,8 +77,7 @@ public class Question implements Comparable<Question> {
      * @return
      */
     public static String getFirstSentence(String message) {
-        String[] tokens = {".", "?", "!", "\n"};
-
+        String[] tokens = {"\n"};
         int index = -1;
 
         for (String token : tokens) {
@@ -91,11 +92,8 @@ public class Question implements Comparable<Question> {
                 index = Math.min(i, index);
             }
         }
-
-        if (index == -1) {
+        if (index == -1)
             return message;
-        }
-
         return message.substring(0, index + 1);
     }
 
