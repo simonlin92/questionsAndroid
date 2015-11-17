@@ -43,7 +43,6 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
 
         initialToolbar();
         initialDrawer();
-        randomLogo();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +119,12 @@ public class BaseActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         return true;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        randomLogo();
     }
 
     private void EnterRoom(String Name) {

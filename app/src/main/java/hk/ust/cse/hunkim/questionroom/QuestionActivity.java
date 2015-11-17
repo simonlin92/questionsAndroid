@@ -59,7 +59,7 @@ public class QuestionActivity extends AppCompatActivity {
         if (roomName == null || roomName.length() == 0) {
             roomName = "all";
         }
-        setTitle("Room name: " + roomName);
+        setTitle(roomName);
 
         List<Question> dataSet = new ArrayList<>();
         QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
