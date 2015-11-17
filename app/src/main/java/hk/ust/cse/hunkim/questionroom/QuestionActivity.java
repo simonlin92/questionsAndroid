@@ -98,7 +98,7 @@ public class QuestionActivity extends AppCompatActivity {
         menu.add(0, 0, 0, "Most Likes");
         menu.add(0, 1, 0, "Least Likes");
         menu.add(0, 2, 0, "Most Recent");
-        menu.add(0, 3, 0, "Old");
+        menu.add(0, 3, 0, "Oldest");
         return true;
     }
 
@@ -213,8 +213,10 @@ public class QuestionActivity extends AppCompatActivity {
                     echoDownclickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             if (question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
-            else
+            else{
+                holder.content.setVisibility(View.VISIBLE);
                 holder.content.setText(question.getDesc());
+            }
             holder.echo.setText(question.getEcho() + "");
         }
     }
