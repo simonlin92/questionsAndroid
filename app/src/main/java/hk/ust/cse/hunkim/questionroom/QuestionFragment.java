@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,11 +53,11 @@ public class QuestionFragment extends Fragment {
         coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_question, container, false);
         setHasOptionsMenu(true);
 
-        initialToolbar();
-        initialDrawer();
-
         Bundle bundle = getArguments();
         roomName = bundle.getString(ROOM_NAME, "all");
+
+        initialToolbar();
+        initialDrawer();
 
         List<Question> dataSet = new ArrayList<>();
         QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
@@ -90,12 +89,6 @@ public class QuestionFragment extends Fragment {
         // get the DB Helper
         dbutil = new DBUtil(new DBHelper(getActivity()));
         return coordinatorLayout;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getActivity().setTitle(roomName);
     }
 
     @Override
@@ -137,10 +130,8 @@ public class QuestionFragment extends Fragment {
 
 
     public void updateEcho(String key, final int value, boolean echo) {
-        if (dbutil.contains(key, true) || dbutil.contains(key, false)) {
-            Log.e("Dupkey", "Key is already in the DB!");
+        if (dbutil.contains(key, true) || dbutil.contains(key, false))
             return;
-        }
 
         final Firebase echoRef = firebaseAdapter.getFirebase().child(key).child("echo");
         echoRef.addListenerForSingleValueEvent(
@@ -148,7 +139,6 @@ public class QuestionFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Long echoValue = (Long) dataSnapshot.getValue();
-                        Log.e("Echo update:", "" + echoValue);
                         echoRef.setValue(echoValue + value);
                     }
 
@@ -172,7 +162,8 @@ public class QuestionFragment extends Fragment {
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(roomName);
         }
     }
 
@@ -250,7 +241,7 @@ public class QuestionFragment extends Fragment {
                 holder.content.setVisibility(View.VISIBLE);
                 holder.content.setText(question.getDesc());
             }
-            holder.echo.setText(question.getEcho() + "");
+            holder.echo.setText(String.valueOf(question.getEcho()));
         }
     }
 

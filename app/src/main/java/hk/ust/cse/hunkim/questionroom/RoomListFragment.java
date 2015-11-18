@@ -137,9 +137,8 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null) {
+        if (actionBar != null)
             actionBar.setDisplayShowTitleEnabled(false);
-        }
     }
 
     private void initialDrawer() {
