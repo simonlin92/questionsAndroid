@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private int navItemId=0;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
@@ -24,28 +23,23 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             Fragment newFragment = new RoomListFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.main_fragment, newFragment).commit();
-            navItemId=R.id.menu_roomlist;
+            navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(true);
         }
-        navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(false);
     }
 
     public void switchRoom(String roomName) {
         Bundle bundle = new Bundle();
         bundle.putString(QuestionFragment.ROOM_NAME, roomName);
-        if (navItemId != 0)
-            navigationView.getMenu().findItem(navItemId).setChecked(false);
+        navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(true);
+        navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(false);
         fragmentTransaction(new QuestionFragment(), bundle);
-        navItemId=0;
     }
 
     @Override
     public boolean onNavigationItemSelected(final MenuItem menuItem) {
         menuItem.setChecked(true);
-        if (navItemId != menuItem.getItemId()) {
-            navItemId = menuItem.getItemId();
-            navigate(menuItem.getItemId());
-            drawerLayout.closeDrawers();
-        }
+        navigate(menuItem.getItemId());
+        drawerLayout.closeDrawers();
         return true;
     }
 

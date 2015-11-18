@@ -1,6 +1,8 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:checkableBehavior="single">
     <item
         android:id="@+id/menu_roomlist"
         android:icon="@drawable/list"
-        android:title="Rooms List"/>
+        android:title="Rooms List"
+        android:checkable="true"/>
 </menu>
