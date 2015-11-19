@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/lock"
-            android:tint="@color/colorAccentDark" />
+            android:tint="@color/colorAccent" />
 
         <TextView
             android:id="@+id/privateroom_hint"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Room"
-            android:textSize="20sp" />
+            android:textSize="@dimen/textSize" />
 
         <EditText
             android:id="@+id/privateroom_password"

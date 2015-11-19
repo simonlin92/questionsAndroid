@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import hk.ust.cse.hunkim.questionroom.OptionFragment;
 import hk.ust.cse.hunkim.questionroom.RecyclerViewAnimateAdapter;
 
 public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewHolder> implements ValueEventListener {
@@ -18,7 +19,7 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
     private List<T> list;
     private Comparator<? super T> comparator = null;
     private boolean sort = true;
-    private int sizeLimit = -1;
+    private int sizeLimit =  OptionFragment.defaultLimit;
 
     public FirebaseValueEventListener(RecyclerViewAnimateAdapter<T, U> adapter, List<T> list) {
         this.adapter = adapter;
@@ -54,7 +55,7 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
     private void sortList() {
         if (comparator != null && sort)
             Collections.sort(list, comparator);
-        if (sizeLimit != -1 && list.size() > 0)
+        if (sizeLimit >  OptionFragment.defaultLimit && list.size() > 0)
             list = list.subList(0, list.size() > sizeLimit ? sizeLimit : list.size());
     }
 

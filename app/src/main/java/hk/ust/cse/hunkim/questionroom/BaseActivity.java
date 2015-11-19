@@ -25,7 +25,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             Fragment newFragment = new RoomListFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.main_fragment, newFragment).commit();
-            navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(true);
         }
     }
 
@@ -44,7 +43,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction(new QuestionRoomFragment(), bundle);
     }
 
-    public void switchRoom(String roomName,String password) {
+    public void switchRoom(String roomName, String password) {
         Bundle bundle = new Bundle();
         bundle.putString(PrivateRoomFragment.ROOM_NAME, roomName);
         bundle.putString(PrivateRoomFragment.PASSWORD, password);
@@ -56,9 +55,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(final MenuItem menuItem) {
-        if (menuItem.isChecked())
-            return true;
-        menuItem.setChecked(true);
         navigate(menuItem.getItemId());
         drawerLayout.closeDrawers();
         return true;
@@ -74,9 +70,15 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void navigate(final int itemId) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
         switch (itemId) {
             case R.id.menu_roomlist:
-                fragmentTransaction(new RoomListFragment());
+                if (!(fragment instanceof RoomListFragment))
+                    fragmentTransaction(new RoomListFragment());
+                break;
+            case R.id.menu_option:
+                if (!(fragment instanceof OptionFragment))
+                    fragmentTransaction(new OptionFragment());
                 break;
         }
     }
