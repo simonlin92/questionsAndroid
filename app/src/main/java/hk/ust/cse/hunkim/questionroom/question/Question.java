@@ -2,7 +2,7 @@ package hk.ust.cse.hunkim.questionroom.question;
 
 import java.util.Date;
 
-import hk.ust.cse.hunkim.questionroom.QuestionFragment;
+import hk.ust.cse.hunkim.questionroom.QuestionRoomFragment;
 
 /**
  * Created by hunkim on 7/16/15.
@@ -172,7 +172,7 @@ public class Question implements Comparable<Question> {
             return this.newQuestion ? 1 : -1; // this is the winner
         }*/
 
-        sort_order currentSort = sort_order.valueOf(QuestionFragment.sort_type);
+        sort_order currentSort = sort_order.valueOf(QuestionRoomFragment.sort_type);
         switch (currentSort) {
             case timestamp:
                 if (other.timestamp == this.timestamp) {

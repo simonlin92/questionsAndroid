@@ -18,6 +18,7 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
     private List<T> list;
     private Comparator<? super T> comparator = null;
     private boolean sort = true;
+    private int sizeLimit = -1;
 
     public FirebaseValueEventListener(RecyclerViewAnimateAdapter<T, U> adapter, List<T> list) {
         this.adapter = adapter;
@@ -45,9 +46,16 @@ public abstract class FirebaseValueEventListener<T, U extends RecyclerView.ViewH
         adapter.animateTo(list);
     }
 
+    public void setSizeLimit(int size) {
+        if (size >= -1)
+            sizeLimit = size;
+    }
+
     private void sortList() {
         if (comparator != null && sort)
             Collections.sort(list, comparator);
+        if (sizeLimit != -1 && list.size() > 0)
+            list = list.subList(0, list.size() > sizeLimit ? sizeLimit : list.size());
     }
 
     public void setSort(boolean sort) {

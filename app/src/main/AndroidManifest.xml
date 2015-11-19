@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QuestionFragment"
+            android:name=".QuestionRoomFragment"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".BaseActivity">
             <meta-data
