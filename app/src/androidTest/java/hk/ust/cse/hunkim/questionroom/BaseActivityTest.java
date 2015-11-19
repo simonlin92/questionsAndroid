@@ -67,7 +67,7 @@ public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActiv
                 semaphore.release();
             }
         });
-
+/*
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
@@ -77,7 +77,7 @@ public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActiv
                 editText = textInputLayout.getEditText();
                 editText.requestFocus();
             }
-        });
+        });*/
         getInstrumentation().waitForIdleSync();
         getInstrumentation().sendStringSync(roomName);
         getInstrumentation().waitForIdleSync();

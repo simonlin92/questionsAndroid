@@ -68,8 +68,7 @@ public class QuestionFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        Toast toast = Toast.makeText(getActivity().getApplicationContext(),"", Toast.LENGTH_SHORT);
-        QuestionValueEventListener questionValueEventListener = new QuestionValueEventListener(toast);
+        QuestionValueEventListener questionValueEventListener = new QuestionValueEventListener(getActivity().getApplicationContext());
         questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
         questionSort = new QuestionSort(getActivity());
         questionChildEventListener.setComparator(questionSort.readSort());
@@ -203,7 +202,7 @@ public class QuestionFragment extends Fragment {
 
         @Override
         public QuestionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.question, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_question, parent, false);
             return new QuestionViewHolder(itemView);
         }
 

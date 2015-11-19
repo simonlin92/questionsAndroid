@@ -1,6 +1,6 @@
 package hk.ust.cse.hunkim.questionroom.question;
 
-import android.util.Log;
+import android.content.Context;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -11,10 +11,10 @@ public class QuestionValueEventListener implements ValueEventListener {
 
     private int questionCount;
     private int lastQuestionCount;
-    private Toast toast;
+    private Context context;
 
-    public QuestionValueEventListener(Toast toast ) {
-        this.toast = toast;
+    public QuestionValueEventListener(Context context) {
+        this.context = context;
         this.lastQuestionCount = -1;
     }
 
@@ -32,8 +32,7 @@ public class QuestionValueEventListener implements ValueEventListener {
 
     public void popUp() {
         int gain = questionCount - lastQuestionCount;
-        String message = (gain > 0)?((gain > 1)?gain+" new questions":gain+" new question"):"No new question";
-        toast.setText(message);
-        toast.show();
+        String message = (gain > 0)?"New question(s) have arrived":"No new question";
+        Toast.makeText(context,message, Toast.LENGTH_SHORT).show();
     }
 }
