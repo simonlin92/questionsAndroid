@@ -20,9 +20,8 @@ public class QuestionValueEventListener implements ValueEventListener {
 
     @Override
     public void onDataChange(DataSnapshot snapshot) {
-       questionCount = (int) snapshot.getChildrenCount();
-
-        Log.d("debug", "onDataChange " + questionCount + " " + lastQuestionCount);
+        questionCount = (int) snapshot.getChildrenCount();
+        
         if (questionCount > lastQuestionCount && lastQuestionCount!=-1)
             popUp();
         lastQuestionCount = questionCount;
