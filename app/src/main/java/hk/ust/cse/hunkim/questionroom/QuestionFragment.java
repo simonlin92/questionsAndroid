@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -36,6 +37,7 @@ import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
 import hk.ust.cse.hunkim.questionroom.question.Question;
 import hk.ust.cse.hunkim.questionroom.question.QuestionChildEventListener;
 import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
+import hk.ust.cse.hunkim.questionroom.question.QuestionValueEventListener;
 
 public class QuestionFragment extends Fragment {
     public static final String ROOM_NAME = "Room_name";
@@ -66,6 +68,8 @@ public class QuestionFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
+        Toast toast = Toast.makeText(getActivity().getApplicationContext(),"", Toast.LENGTH_SHORT);
+        QuestionValueEventListener questionValueEventListener = new QuestionValueEventListener(toast);
         questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
         questionSort = new QuestionSort(getActivity());
         questionChildEventListener.setComparator(questionSort.readSort());
@@ -73,6 +77,7 @@ public class QuestionFragment extends Fragment {
         firebaseAdapter = new FirebaseAdapter(getActivity());
         firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("questions"));
         firebaseAdapter.addChildEventListener(questionChildEventListener);
+        firebaseAdapter.addValueEventListener(questionValueEventListener);
 
         findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
             @Override
