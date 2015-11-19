@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -49,10 +49,11 @@ public class QuestionRoomFragment extends Fragment {
     private RecyclerView recyclerView;
     private CoordinatorLayout coordinatorLayout;
     private String roomName;
+    private ImageView sortImageView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_question, container, false);
+        coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_questionroom, container, false);
         setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
@@ -72,6 +73,8 @@ public class QuestionRoomFragment extends Fragment {
         questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
         questionSort = new QuestionSort(getActivity());
         questionChildEventListener.setComparator(questionSort.readSort());
+        sortImageView = (ImageView) findViewById(R.id.questionroom_sort);
+        sortImageView.setImageResource(questionSort.readSortByEnum().getIcon());
 
         firebaseAdapter = new FirebaseAdapter(getActivity());
         firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("questions"));
@@ -98,32 +101,33 @@ public class QuestionRoomFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.add(0, 0, 0, "Most Recent");
-        menu.add(0, 1, 0, "Most Likes");
-        menu.add(0, 2, 0, "Oldest");
-        menu.add(0, 3, 0, "Least Likes");
+        menu.add(0, 0, 0, QuestionSort.Order.TIME_DESC.getText());
+        menu.add(0, 1, 0, QuestionSort.Order.ECHO_DESC.getText());
+        menu.add(0, 2, 0, QuestionSort.Order.TIME_ASC.getText());
+        menu.add(0, 3, 0, QuestionSort.Order.ECHO_ASC.getText());
     }
 
     //According to the menu choice, turn to its sort type
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 1:
-                questionSort.saveSort(QuestionSort.Order.ECHO_DESC);
-                break;
-            case 3:
-                questionSort.saveSort(QuestionSort.Order.ECHO_ASC);
-                break;
             case 0:
                 questionSort.saveSort(QuestionSort.Order.TIME_DESC);
                 break;
+            case 1:
+                questionSort.saveSort(QuestionSort.Order.ECHO_DESC);
+                break;
             case 2:
                 questionSort.saveSort(QuestionSort.Order.TIME_ASC);
+                break;
+            case 3:
+                questionSort.saveSort(QuestionSort.Order.ECHO_ASC);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         questionChildEventListener.setComparator(questionSort.readSort());
+        sortImageView.setImageResource(questionSort.readSortByEnum().getIcon());
         scrollToTop();
         return super.onOptionsItemSelected(item);
     }
@@ -239,7 +243,7 @@ public class QuestionRoomFragment extends Fragment {
                     echoUpClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             holder.echoDown.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
                     echoDownClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-            if (question.getDesc() == null ||question.getDesc().isEmpty())
+            if (question.getDesc() == null || question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
             else {
                 holder.content.setVisibility(View.VISIBLE);

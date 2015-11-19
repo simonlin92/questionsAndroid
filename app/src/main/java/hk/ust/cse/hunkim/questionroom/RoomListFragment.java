@@ -1,5 +1,7 @@
 package hk.ust.cse.hunkim.questionroom;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -66,8 +68,8 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
 
         RoomValueEventListener<RoomListAdapter.RoomViewHolder> roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
         roomValueEventListener.setComparator(new RoomReplyCountComparator(false));
-        //TODO: sizeLimit
-        //roomValueEventListener.setSizeLimit(10);
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        roomValueEventListener.setSizeLimit(sharedPref.getInt(OptionFragment.limitPrefKey, OptionFragment.defaultLimit));
 
         FirebaseAdapter firebaseAdapter = new FirebaseAdapter(getActivity());
         firebaseAdapter.addValueEventListener(roomValueEventListener);

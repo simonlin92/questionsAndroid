@@ -5,4 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="expanded_toolbar_title_margin_start">64dp</dimen>
     <integer name="duration">500</integer>
+    <dimen name="textSize">20sp</dimen>
 </resources>

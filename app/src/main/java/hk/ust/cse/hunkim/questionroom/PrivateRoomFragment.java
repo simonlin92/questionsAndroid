@@ -26,8 +26,6 @@ public class PrivateRoomFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_privateroom, container, false);
-        initialToolbar();
-        initialDrawer();
 
         Bundle bundle = getArguments();
         roomName = bundle.getString(ROOM_NAME, "all");
@@ -35,6 +33,9 @@ public class PrivateRoomFragment extends Fragment {
         passwordTextView = (TextView) coordinatorLayout.findViewById(R.id.privateroom_password);
         roomNameTextView.setText(roomName + " is locked");
         password = bundle.getString(PASSWORD, "");
+
+        initialToolbar();
+        initialDrawer();
 
         coordinatorLayout.findViewById(R.id.privateroom_submit).setOnClickListener(new View.OnClickListener() {
             @Override
