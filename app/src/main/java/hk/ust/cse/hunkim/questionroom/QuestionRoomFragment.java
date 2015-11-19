@@ -39,7 +39,7 @@ import hk.ust.cse.hunkim.questionroom.question.QuestionChildEventListener;
 import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
 import hk.ust.cse.hunkim.questionroom.question.QuestionValueEventListener;
 
-public class QuestionFragment extends Fragment {
+public class QuestionRoomFragment extends Fragment {
     public static final String ROOM_NAME = "Room_name";
     public static String sort_type;
     private DBUtil dbutil;

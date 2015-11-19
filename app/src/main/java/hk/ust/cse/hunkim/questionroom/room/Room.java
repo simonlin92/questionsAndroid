@@ -3,10 +3,20 @@ package hk.ust.cse.hunkim.questionroom.room;
 public class Room {
     public final String name;
     public final int questionCount;
+    public final String password;
 
-    public Room(String name, int questionCount) {
+    public Room(String name, int questionCount, String password) {
         this.name = name;
         this.questionCount = questionCount;
+        this.password = password;
+    }
+
+    public Room(String name, int questionCount) {
+        this(name, questionCount, "");
+    }
+
+    public boolean hasPassword() {
+        return !password.isEmpty();
     }
 
     @Override
@@ -15,7 +25,7 @@ public class Room {
         if (other == this) return true;
         if (!(other instanceof Room)) return false;
         Room otherRoom = (Room) other;
-        return name.equals(otherRoom.name);
+        return name.equals(otherRoom.name) && questionCount == otherRoom.questionCount;
     }
 
     public static boolean isNameValid(String roomName) {

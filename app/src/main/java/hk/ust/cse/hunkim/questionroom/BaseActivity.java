@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,11 +38,21 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     public void switchRoom(String roomName) {
         Bundle bundle = new Bundle();
-        bundle.putString(QuestionFragment.ROOM_NAME, roomName);
+        bundle.putString(QuestionRoomFragment.ROOM_NAME, roomName);
         navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(true);
         navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(false);
-        fragmentTransaction(new QuestionFragment(), bundle);
+        fragmentTransaction(new QuestionRoomFragment(), bundle);
     }
+
+    public void switchRoom(String roomName,String password) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PrivateRoomFragment.ROOM_NAME, roomName);
+        bundle.putString(PrivateRoomFragment.PASSWORD, password);
+        navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(true);
+        navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(false);
+        fragmentTransaction(new PrivateRoomFragment(), bundle);
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(final MenuItem menuItem) {
@@ -58,7 +67,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-        if (fragment instanceof QuestionFragment)
+        if (fragment instanceof QuestionRoomFragment || fragment instanceof PrivateRoomFragment)
             onNavigationItemSelected(navigationView.getMenu().findItem(R.id.menu_roomlist));
         else
             super.onBackPressed();

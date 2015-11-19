@@ -64,8 +64,10 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        RoomValueEventListener<RoomViewHolder> roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
+        RoomValueEventListener<RoomListAdapter.RoomViewHolder> roomValueEventListener = new RoomValueEventListener<>(adapter, dataSet);
         roomValueEventListener.setComparator(new RoomReplyCountComparator(false));
+        //TODO: sizeLimit
+        //roomValueEventListener.setSizeLimit(10);
 
         FirebaseAdapter firebaseAdapter = new FirebaseAdapter(getActivity());
         firebaseAdapter.addValueEventListener(roomValueEventListener);
@@ -104,7 +106,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (Room.isNameValid(query)) {
-            EnterRoom(query);
+            enterRoom(query);
             return true;
         }
         Snackbar.make(findViewById(R.id.root_layout), "Only a-z, A-Z and 0-9 can be used.", Snackbar.LENGTH_LONG).show();
@@ -171,13 +173,18 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
         logo.setImageResource(logoID[rand.nextInt(logoID.length)]);
     }
 
-    private void EnterRoom(String Name) {
+    private void enterRoom(String name) {
         BaseActivity baseActivity = (BaseActivity) getActivity();
-        baseActivity.switchRoom(Name);
+        baseActivity.switchRoom(name);
+    }
+
+    private void enterRoom(String name, String password) {
+        BaseActivity baseActivity = (BaseActivity) getActivity();
+        baseActivity.switchRoom(name, password);
     }
 
     //=====================================Private Class=====================================
-    private class RoomListAdapter extends RecyclerViewAnimateAdapter<Room, RoomViewHolder> implements View.OnClickListener {
+    private class RoomListAdapter extends RecyclerViewAnimateAdapter<Room, RoomListAdapter.RoomViewHolder> {
 
         public RoomListAdapter(List<Room> list) {
             super(list);
@@ -186,32 +193,38 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
         @Override
         public RoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_room, parent, false);
-            itemView.setOnClickListener(this);
             return new RoomViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(RoomViewHolder holder, int position) {
             Room room = list.get(position);
-            holder.Name.setText(room.name);
-            holder.Count.setText(room.questionCount <= 999 ? String.valueOf(room.questionCount) : "999+");
+            holder.name.setText(room.name);
+            holder.count.setText(room.questionCount <= 999 ? String.valueOf(room.questionCount) : "999+");
+            holder.lock.setVisibility(room.hasPassword() ? View.VISIBLE : View.GONE);
         }
 
-        @Override
-        public void onClick(View v) {
-            TextView Name = (TextView) v.findViewById(R.id.card_room_name);
-            EnterRoom(Name.getText().toString());
-        }
-    }
+        class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            private final TextView name;
+            private final TextView count;
+            private final ImageView lock;
 
-    private static class RoomViewHolder extends RecyclerView.ViewHolder {
-        private final TextView Name;
-        private final TextView Count;
+            public RoomViewHolder(View v) {
+                super(v);
+                name = (TextView) v.findViewById(R.id.card_room_name);
+                count = (TextView) v.findViewById(R.id.card_room_count);
+                lock = (ImageView) v.findViewById(R.id.card_room_lock);
+                v.setOnClickListener(this);
+            }
 
-        public RoomViewHolder(View v) {
-            super(v);
-            Name = (TextView) v.findViewById(R.id.card_room_name);
-            Count = (TextView) v.findViewById(R.id.card_room_count);
+            @Override
+            public void onClick(View v) {
+                Room room = list.get(getAdapterPosition());
+                if (room.hasPassword())
+                    enterRoom(room.name, room.password);
+                else
+                    enterRoom(room.name);
+            }
         }
     }
 }

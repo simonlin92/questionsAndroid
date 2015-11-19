@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import hk.ust.cse.hunkim.questionroom.question.Question;
 
-public class QuestionFragmentTest extends ActivityInstrumentationTestCase2<BaseActivity> {
+public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<BaseActivity> {
 
     private TextView headView;
     private TextView descView;
@@ -19,7 +19,7 @@ public class QuestionFragmentTest extends ActivityInstrumentationTestCase2<BaseA
     private ImageView sendButton;
     private EditText inputField;
 
-    public QuestionFragmentTest() {
+    public QuestionRoomFragmentTest() {
         super(BaseActivity.class);
     }
 

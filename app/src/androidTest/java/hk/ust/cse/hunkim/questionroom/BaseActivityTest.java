@@ -1,14 +1,11 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Instrumentation;
-import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.RecyclerView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
 
 import java.util.concurrent.Semaphore;
@@ -87,10 +84,10 @@ public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActiv
         semaphore.release();
 
         try{Thread.sleep(1000);}catch(Exception e){};
-        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(QuestionFragment.class.getName(), null, false);
+        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(QuestionRoomFragment.class.getName(), null, false);
 
         try{Thread.sleep(1000);}catch(Exception e){};
-        //QuestionFragment questionFragment = (QuestionFragment) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,2000);
+        //QuestionRoomFragment questionFragment = (QuestionRoomFragment) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,2000);
         try{Thread.sleep(1000);}catch(Exception e){};
 /*
         boolean result = (questionFragment != null);
