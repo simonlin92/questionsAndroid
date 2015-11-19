@@ -3,6 +3,7 @@ package hk.ust.cse.hunkim.questionroom;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,6 +50,7 @@ public class QuestionRoomFragment extends Fragment {
     private CoordinatorLayout coordinatorLayout;
     private String roomName;
     private ImageView sortImageView;
+    private ImageView favImageView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,7 +93,15 @@ public class QuestionRoomFragment extends Fragment {
                 }
             }
         });
-
+        favImageView = (ImageView) findViewById(R.id.questionroom_fav);
+        favImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OptionFragment.putFavRoom(getActivity(), roomName);
+                setFav();
+            }
+        });
+        setFav();
         // get the DB Helper
         dbutil = new DBUtil(new DBHelper(getActivity()));
         return coordinatorLayout;
@@ -196,6 +205,20 @@ public class QuestionRoomFragment extends Fragment {
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+    }
+
+    private void setFav() {
+
+        NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
+        String name = OptionFragment.readFavRoom(getActivity());
+        if (name.equals(roomName)){
+            favImageView.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
+                    R.color.colorAccentDark), PorterDuff.Mode.SRC_ATOP);
+            navigationView.getMenu().findItem(R.id.menu_favourite).setChecked(true);
+        }
+        else
+            favImageView.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
+                    R.color.White), PorterDuff.Mode.SRC_ATOP);
     }
 
     //=====================================Private Class=====================================

@@ -11,7 +11,7 @@ import hk.ust.cse.hunkim.questionroom.RecyclerViewAnimateAdapter;
 import hk.ust.cse.hunkim.questionroom.firebase.FirebaseValueEventListener;
 
 public class RoomValueEventListener<T extends RecyclerView.ViewHolder> extends FirebaseValueEventListener<Room, T> {
-    private static final String PASSWORD_KEY = "password";
+    public static final String PASSWORD_KEY = "password";
 
     public RoomValueEventListener(RecyclerViewAnimateAdapter<Room, T> adapter, List<Room> list) {
         super(adapter, list);

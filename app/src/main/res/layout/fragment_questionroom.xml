@@ -26,6 +26,15 @@
                 android:layout_marginEnd="10dp"
                 android:layout_gravity="right"
                 android:src="@drawable/time_asc"/>
+            <ImageView
+                android:id="@+id/questionroom_fav"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:tint="@color/White"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="right"
+                android:src="@drawable/star"/>
             </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

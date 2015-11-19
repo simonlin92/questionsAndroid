@@ -177,12 +177,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
 
     private void enterRoom(String name) {
         BaseActivity baseActivity = (BaseActivity) getActivity();
-        baseActivity.switchRoom(name);
-    }
-
-    private void enterRoom(String name, String password) {
-        BaseActivity baseActivity = (BaseActivity) getActivity();
-        baseActivity.switchRoom(name, password);
+        baseActivity.enterRoom(name);
     }
 
     //=====================================Private Class=====================================
@@ -222,10 +217,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
             @Override
             public void onClick(View v) {
                 Room room = list.get(getAdapterPosition());
-                if (room.hasPassword())
-                    enterRoom(room.name, room.password);
-                else
-                    enterRoom(room.name);
+                enterRoom(room.name);
             }
         }
     }

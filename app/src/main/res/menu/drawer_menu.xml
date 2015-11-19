@@ -7,6 +7,12 @@
             android:icon="@drawable/list"
             android:title="Rooms List" />
         <item
+            android:id="@+id/menu_favourite"
+            android:checkable="true"
+            android:checked="false"
+            android:icon="@drawable/star"
+            android:title="Favourite" />
+        <item
             android:id="@+id/menu_option"
             android:checkable="true"
             android:checked="false"

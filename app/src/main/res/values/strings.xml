@@ -17,5 +17,6 @@
     <string name="EnterButton">Enter</string>
     <string name="RoomListLimit">Room list limit:</string>
     <string name="QuestionSort">Questoin sort:</string>
+    <string name="FavouriteRoom">Favourite Room:</string>
 
 </resources>

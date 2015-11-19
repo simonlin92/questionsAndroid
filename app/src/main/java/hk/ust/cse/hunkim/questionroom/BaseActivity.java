@@ -9,6 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.Map;
+
+import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
+import hk.ust.cse.hunkim.questionroom.room.Room;
+import hk.ust.cse.hunkim.questionroom.room.RoomValueEventListener;
+
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -43,13 +53,48 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction(new QuestionRoomFragment(), bundle);
     }
 
-    public void switchRoom(String roomName, String password) {
+    private void switchRoom(String roomName, String password) {
         Bundle bundle = new Bundle();
         bundle.putString(PrivateRoomFragment.ROOM_NAME, roomName);
         bundle.putString(PrivateRoomFragment.PASSWORD, password);
         navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(true);
         navigationView.getMenu().findItem(R.id.menu_roomlist).setChecked(false);
         fragmentTransaction(new PrivateRoomFragment(), bundle);
+    }
+
+    public void enterRoom(final String roomName) {
+        FirebaseAdapter firebaseAdapter = new FirebaseAdapter(this);
+        firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName));
+        firebaseAdapter.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Room room;
+                try {
+                    Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
+                    if (map == null) {
+                        switchRoom(roomName);
+                        return;
+                    }
+                    if (map.containsKey(RoomValueEventListener.PASSWORD_KEY))
+                        room = new Room(snapshot.getKey(), (int) snapshot.child("/questions").getChildrenCount(),
+                                map.get(RoomValueEventListener.PASSWORD_KEY).toString());
+                    else
+                        room = new Room(snapshot.getKey(), (int) snapshot.child("/questions").getChildrenCount());
+
+                } catch (ClassCastException e) {
+                    room = new Room(snapshot.getKey(), (int) snapshot.child("/questions").getChildrenCount());
+                }
+                if (room.hasPassword())
+                    switchRoom(room.name, room.password);
+                else
+                    switchRoom(room.name);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
 
@@ -79,6 +124,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_option:
                 if (!(fragment instanceof OptionFragment))
                     fragmentTransaction(new OptionFragment());
+                break;
+
+            case R.id.menu_favourite:
+                String roomName = OptionFragment.readFavRoom(this);
+                enterRoom(roomName);
                 break;
         }
     }
