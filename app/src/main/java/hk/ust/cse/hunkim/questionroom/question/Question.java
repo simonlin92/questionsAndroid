@@ -13,15 +13,15 @@ public class Question implements Comparable<Question> {
      * Must be synced with firebase JSON structure
      * Each must have getters
      */
-    private String key;
-    private String wholeMsg;
-    private String head;
-    private String headLastChar;
-    private String desc;
-    private String linkedDesc;
+    private String key="";
+    private String wholeMsg="";
+    private String head="";
+    private String headLastChar="";
+    private String desc="";
+    private String linkedDesc="";
     private boolean completed;
     private long timestamp;
-    private String tags;
+    private String tags="";
     private int echo;
     private int order;
     private boolean newQuestion;

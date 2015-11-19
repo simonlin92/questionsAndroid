@@ -93,11 +93,13 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     @Override
     public boolean onMenuItemActionExpand(MenuItem item) {
         ((AppBarLayout) findViewById(R.id.app_bar_layout)).setExpanded(false);
+        ((FloatingActionButton)findViewById(R.id.fab)).hide();
         return true;
     }
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
+        ((FloatingActionButton)findViewById(R.id.fab)).show();
         return true;
     }
 

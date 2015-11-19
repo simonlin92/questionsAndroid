@@ -23,7 +23,7 @@ public class QuestionSort {
 
     public Comparator<? super Question> readSort() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int num = sharedPref.getInt(prefKey, Order.ECHO_ASC.getValue());
+        int num = sharedPref.getInt(prefKey, Order.TIME_DESC.getValue());
         return getComparator(intToEnum(num));
     }
 
@@ -46,7 +46,7 @@ public class QuestionSort {
             if (o.getValue() == num)
                 return o;
         }
-        return Order.ECHO_ASC;
+        return Order.TIME_DESC;
     }
 
     public enum Order {

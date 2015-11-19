@@ -94,26 +94,26 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.add(0, 0, 0, "Most Likes");
-        menu.add(0, 1, 0, "Least Likes");
-        menu.add(0, 2, 0, "Most Recent");
-        menu.add(0, 3, 0, "Oldest");
+        menu.add(0, 0, 0, "Most Recent");
+        menu.add(0, 1, 0, "Most Likes");
+        menu.add(0, 2, 0, "Oldest");
+        menu.add(0, 3, 0, "Least Likes");
     }
 
     //According to the menu choice, turn to its sort type
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 0:
+            case 1:
                 questionSort.saveSort(QuestionSort.Order.ECHO_DESC);
                 break;
-            case 1:
+            case 3:
                 questionSort.saveSort(QuestionSort.Order.ECHO_ASC);
                 break;
-            case 2:
+            case 0:
                 questionSort.saveSort(QuestionSort.Order.TIME_DESC);
                 break;
-            case 3:
+            case 2:
                 questionSort.saveSort(QuestionSort.Order.TIME_ASC);
                 break;
             default:
@@ -235,7 +235,7 @@ public class QuestionFragment extends Fragment {
                     echoUpClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             holder.echoDown.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
                     echoDownClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-            if (question.getDesc().isEmpty())
+            if (question.getDesc() == null ||question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
             else {
                 holder.content.setVisibility(View.VISIBLE);

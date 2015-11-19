@@ -31,7 +31,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -47,10 +47,21 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(final MenuItem menuItem) {
+        if (menuItem.isChecked())
+            return true;
         menuItem.setChecked(true);
         navigate(menuItem.getItemId());
         drawerLayout.closeDrawers();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        if (fragment instanceof QuestionFragment)
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.menu_roomlist));
+        else
+            super.onBackPressed();
     }
 
     private void navigate(final int itemId) {
