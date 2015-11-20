@@ -291,10 +291,10 @@ public class QuestionRoomFragment extends Fragment {
             holder.date_Time.setText(String.valueOf(getDate(question.getTimestamp())));
             if(question.getOrder()==1){
                 holder.fixedTop.setVisibility(View.VISIBLE);
-                holder.relativeLayout.setBackgroundColor(getResources().getColor(R.color.FixedColor));
+                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
             }else{
                 holder.fixedTop.setVisibility(View.GONE);
-                holder.relativeLayout.setBackgroundColor(getResources().getColor(R.color.colorSub));
+                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
             }
         }
     }
