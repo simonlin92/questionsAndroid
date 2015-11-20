@@ -1,8 +1,11 @@
 package hk.ust.cse.hunkim.questionroom;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -19,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,6 +53,7 @@ public class QuestionRoomFragment extends Fragment {
     private String roomName;
     private ImageView sortImageView;
     private ImageView favImageView;
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +65,18 @@ public class QuestionRoomFragment extends Fragment {
 
         initialToolbar();
         initialDrawer();
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), QuestionActivity.class);
+                intent.putExtra(QuestionActivity.TITLE_KEY, roomName);
+                intent.putExtra(QuestionActivity.FABX_KEY, (int)fab.getX());
+                intent.putExtra(QuestionActivity.FABY_KEY, (int)fab.getY());
+                startActivityForResult(intent, 1);
+            }
+        });
 
         List<Question> dataSet = new ArrayList<>();
         QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
@@ -82,17 +97,7 @@ public class QuestionRoomFragment extends Fragment {
         firebaseAdapter.addChildEventListener(questionChildEventListener);
         firebaseAdapter.addValueEventListener(questionValueEventListener);
 
-        findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText inputText = (EditText) findViewById(R.id.messageInput);
-                String input = inputText.getText().toString();
-                if (!input.equals("")) {
-                    sendMessage(new Question(input));
-                    inputText.setText("");
-                }
-            }
-        });
+
         favImageView = (ImageView) findViewById(R.id.questionroom_fav);
         favImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +110,16 @@ public class QuestionRoomFragment extends Fragment {
         // get the DB Helper
         dbutil = new DBUtil(new DBHelper(getActivity()));
         return coordinatorLayout;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra(QuestionActivity.RESULT_KEY);
+                sendMessage(new Question(result));
+            }
+        }
     }
 
     @Override
@@ -211,12 +226,11 @@ public class QuestionRoomFragment extends Fragment {
 
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
         String name = OptionFragment.readFavRoom(getActivity());
-        if (name.equals(roomName)){
+        if (name.equals(roomName)) {
             favImageView.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
                     R.color.colorAccentDark), PorterDuff.Mode.SRC_ATOP);
             navigationView.getMenu().findItem(R.id.menu_favourite).setChecked(true);
-        }
-        else
+        } else
             favImageView.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
                     R.color.White), PorterDuff.Mode.SRC_ATOP);
     }

@@ -20,9 +20,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QuestionRoomFragment"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".BaseActivity">
+            android:name=".QuestionActivity"
+            android:parentActivityName=".BaseActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".BaseActivity" />

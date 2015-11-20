@@ -24,7 +24,10 @@
             android:text="RoomName"
             android:textSize="@dimen/textSize"
             android:textStyle="bold" />
+
         <ImageView
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:id="@+id/card_room_lock"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
