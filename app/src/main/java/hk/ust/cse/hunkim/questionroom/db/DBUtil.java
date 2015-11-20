@@ -10,11 +10,12 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DBUtil {
     SQLiteOpenHelper helper;
+
     public DBUtil(SQLiteOpenHelper helper) {
         this.helper = helper;
     }
 
-    public long put(String key,Boolean echo) {
+    public long put(String key, Boolean echo) {
 
         // Gets the data repository in write mode
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -36,7 +37,7 @@ public class DBUtil {
         Cursor c = db.rawQuery(
                 "SELECT 1 FROM " + DBHelper.TABLE_NAME +
                         " WHERE " + DBHelper.KEY_NAME +
-                        " = ? AND "+ DBHelper.ECHO_NAME +" = ?", new String[]{key,echo.toString()});
+                        " = ? AND " + DBHelper.ECHO_NAME + " = ?", new String[]{key, echo.toString()});
         boolean exists = c.moveToFirst();
         c.close();
         return exists;

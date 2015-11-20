@@ -16,18 +16,18 @@ public class FirebaseAdapter {
     }
 
     public void addChildEventListener(ChildEventListener childEventListener) {
-            firebase.addChildEventListener(childEventListener);
+        firebase.addChildEventListener(childEventListener);
     }
 
     public void addListenerForSingleValueEvent(ValueEventListener valueEventListener) {
-            firebase.addListenerForSingleValueEvent(valueEventListener);
+        firebase.addListenerForSingleValueEvent(valueEventListener);
     }
 
     public void addValueEventListener(ValueEventListener valueEventListener) {
-            firebase.addValueEventListener(valueEventListener);
+        firebase.addValueEventListener(valueEventListener);
     }
 
-    public void setFirebase( Firebase firebase) {
+    public void setFirebase(Firebase firebase) {
         this.firebase = firebase;
     }
 

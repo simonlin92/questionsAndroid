@@ -26,11 +26,21 @@
                 android:maxWidth="40dp"
                 android:src="@drawable/newtag" />
 
+            <ImageView
+                android:id="@+id/FixedTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:layout_toRightOf="@id/Question_New"
+                android:paddingTop="3dp"
+                android:maxWidth="40dp"
+                android:src="@drawable/brush_pencil" />
+
             <TextView
                 android:id="@+id/Question_Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/Question_New"
+                android:layout_toRightOf="@id/FixedTop"
                 android:gravity="center_vertical"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
@@ -91,6 +101,19 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="0"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/date_time"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/Question_Content"
+                android:gravity="right"
+                android:textAlignment="gravity"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Date"
                 android:textSize="20dp"
                 android:textStyle="bold" />
         </LinearLayout>
