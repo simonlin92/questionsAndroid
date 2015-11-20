@@ -11,6 +11,16 @@ public class QuestionTimestampComparator implements Comparator<Question> {
 
     @Override
     public int compare(Question lhs, Question rhs) {
+
+        if (lhs.getOrder() == 1) {
+            if (rhs.getOrder() == lhs.getOrder())
+                return 0;
+            return -1;
+        }
+        if (rhs.getOrder() == 1) {
+            return 1;
+        }
+
         if (lhs.getTimestamp() == rhs.getTimestamp())
             return 0;
         if (lhs.getTimestamp() < rhs.getTimestamp())

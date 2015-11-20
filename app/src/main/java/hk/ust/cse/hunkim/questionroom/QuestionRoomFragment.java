@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -31,7 +33,9 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import hk.ust.cse.hunkim.questionroom.db.DBHelper;
 import hk.ust.cse.hunkim.questionroom.db.DBUtil;
@@ -72,8 +76,8 @@ public class QuestionRoomFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), QuestionActivity.class);
                 intent.putExtra(QuestionActivity.TITLE_KEY, roomName);
-                intent.putExtra(QuestionActivity.FABX_KEY, (int)fab.getX());
-                intent.putExtra(QuestionActivity.FABY_KEY, (int)fab.getY());
+                intent.putExtra(QuestionActivity.FABX_KEY, (int) fab.getX());
+                intent.putExtra(QuestionActivity.FABY_KEY, (int) fab.getY());
                 startActivityForResult(intent, 1);
             }
         });
@@ -160,6 +164,11 @@ public class QuestionRoomFragment extends Fragment {
         firebaseAdapter.getFirebase().push().setValue(question);
     }
 
+    private String getDate(long time) {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(time);
+        return DateFormat.format("HH:mm dd/MM", cal).toString();
+    }
 
     public void updateEcho(String key, final int value, boolean echo) {
         if (dbutil.contains(key, true) || dbutil.contains(key, false))
@@ -287,6 +296,14 @@ public class QuestionRoomFragment extends Fragment {
                 holder.content.setText(question.getDesc());
             }
             holder.echo.setText(String.valueOf(question.getEcho()));
+            holder.date_Time.setText(String.valueOf(getDate(question.getTimestamp())));
+            if (question.getOrder() == 1) {
+                holder.fixedTop.setVisibility(View.VISIBLE);
+                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
+            } else {
+                holder.fixedTop.setVisibility(View.GONE);
+                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
+            }
         }
     }
 
@@ -294,18 +311,24 @@ public class QuestionRoomFragment extends Fragment {
         private final ImageView newImage;
         private final ImageView echoUp;
         private final ImageView echoDown;
+        private final ImageView fixedTop;
         private final TextView title;
         private final TextView content;
         private final TextView echo;
+        private final TextView date_Time;
+        private final RelativeLayout relativeLayout;
 
         public QuestionViewHolder(View v) {
             super(v);
             newImage = (ImageView) v.findViewById(R.id.Question_New);
             echoUp = (ImageView) v.findViewById(R.id.echoUp);
             echoDown = (ImageView) v.findViewById(R.id.echoDown);
+            fixedTop = (ImageView) v.findViewById(R.id.FixedTop);
             title = (TextView) v.findViewById(R.id.Question_Title);
             content = (TextView) v.findViewById(R.id.Question_Content);
             echo = (TextView) v.findViewById(R.id.echo);
+            date_Time = (TextView) v.findViewById(R.id.date_time);
+            relativeLayout = (RelativeLayout) v.findViewById(R.id.Question_TitlLayout);
         }
     }
 }

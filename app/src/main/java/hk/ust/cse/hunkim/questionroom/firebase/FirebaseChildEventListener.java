@@ -111,14 +111,14 @@ public abstract class FirebaseChildEventListener<T, U extends RecyclerView.ViewH
         adapter.animateTo(list);
     }
 
-    public void setSort(boolean sort){
-        this.sort=sort;
+    public void setSort(boolean sort) {
+        this.sort = sort;
     }
 
     protected abstract void setKey(String key, T model);
 
     private void sortList() {
-        if (comparator != null&&sort)
+        if (comparator != null && sort)
             Collections.sort(list, comparator);
     }
 }

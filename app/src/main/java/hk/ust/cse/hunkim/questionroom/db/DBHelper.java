@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String ECHO_NAME = "echo";
 
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + TABLE_NAME + " (" + KEY_NAME + " TEXT UNIQUE,"+ECHO_NAME+")";
+            "CREATE TABLE " + TABLE_NAME + " (" + KEY_NAME + " TEXT UNIQUE," + ECHO_NAME + ")";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + TABLE_NAME;
