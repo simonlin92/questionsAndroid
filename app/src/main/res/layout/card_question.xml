@@ -104,6 +104,16 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
+            <ImageView
+                android:id="@+id/reply"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:maxHeight="20dp"
+                android:src="@drawable/reply"
+                android:tint="?attr/colorPrimary" />
+
             <TextView
                 android:id="@+id/date_time"
                 android:layout_width="match_parent"

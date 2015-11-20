@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QuestionActivity"
-            android:parentActivityName=".BaseActivity"
+            android:name=".PostActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BaseActivity" />
+        </activity>
+        <activity
+            android:name=".QuestionActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

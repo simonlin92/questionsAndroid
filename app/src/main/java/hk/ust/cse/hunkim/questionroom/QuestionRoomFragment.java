@@ -74,15 +74,14 @@ public class QuestionRoomFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), QuestionActivity.class);
-                intent.putExtra(QuestionActivity.TITLE_KEY, roomName);
-                intent.putExtra(QuestionActivity.FABX_KEY, (int) fab.getX());
-                intent.putExtra(QuestionActivity.FABY_KEY, (int) fab.getY());
+                Intent intent = new Intent(getContext(), PostActivity.class);
+                intent.putExtra(PostActivity.TITLE_KEY, roomName);
+                intent.putExtra(PostActivity.FABX_KEY, (int) fab.getX());
+                intent.putExtra(PostActivity.FABY_KEY, (int) fab.getY());
                 startActivityForResult(intent, 1);
             }
         });
 
-        List<Question> dataSet = new ArrayList<>();
         QuestionListAdapter adapter = new QuestionListAdapter(new ArrayList<Question>());
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -90,7 +89,7 @@ public class QuestionRoomFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         QuestionValueEventListener questionValueEventListener = new QuestionValueEventListener(getActivity().getApplicationContext());
-        questionChildEventListener = new QuestionChildEventListener<>(adapter, dataSet);
+        questionChildEventListener = new QuestionChildEventListener<>(adapter, new ArrayList<Question>());
         questionSort = new QuestionSort(getActivity());
         questionChildEventListener.setComparator(questionSort.readSort());
         sortImageView = (ImageView) findViewById(R.id.questionroom_sort);
@@ -120,7 +119,7 @@ public class QuestionRoomFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                String result = data.getStringExtra(QuestionActivity.RESULT_KEY);
+                String result = data.getStringExtra(PostActivity.RESULT_KEY);
                 sendMessage(new Question(result));
             }
         }
@@ -307,7 +306,7 @@ public class QuestionRoomFragment extends Fragment {
         }
     }
 
-    private static class QuestionViewHolder extends RecyclerView.ViewHolder {
+    private class QuestionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ImageView newImage;
         private final ImageView echoUp;
         private final ImageView echoDown;
@@ -329,6 +328,16 @@ public class QuestionRoomFragment extends Fragment {
             echo = (TextView) v.findViewById(R.id.echo);
             date_Time = (TextView) v.findViewById(R.id.date_time);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.Question_TitlLayout);
+            v.findViewById(R.id.reply).setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), QuestionActivity.class);
+            intent.putExtra(QuestionActivity.ROOMNAME_KEY, roomName);
+            intent.putExtra(QuestionActivity.QUESTION_KEY, (String) echoUp.getTag());
+            intent.putExtra(QuestionActivity.TITLE_KEY, title.getText().toString());
+            startActivity(intent);
         }
     }
 }

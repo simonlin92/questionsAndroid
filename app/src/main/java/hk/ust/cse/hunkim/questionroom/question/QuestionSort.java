@@ -36,7 +36,7 @@ public class QuestionSort {
         return intToEnum(num);
     }
 
-    private Comparator<? super Question> getComparator(Order sort) {
+    public static Comparator<? super Question> getComparator(Order sort) {
         switch (sort) {
             case TIME_ASC:
                 return new QuestionTimestampComparator(true);
