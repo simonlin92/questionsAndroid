@@ -123,18 +123,50 @@
                 android:textSize="@dimen/textSize"
                 android:textStyle="bold" />
 
+            <ImageView
+                android:id="@+id/Set_Fixed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:maxHeight="20dp"
+                android:src="@drawable/ic_arrow_upward"
+                android:visibility="gone"
+                android:tint="?attr/colorPrimary" />
+
+            <ImageView
+                android:id="@+id/Cancel_Fixed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:maxHeight="20dp"
+                android:src="@drawable/ic_arrow_downward"
+                android:visibility="gone"
+                android:tint="?attr/colorPrimary" />
+
             <TextView
                 android:id="@+id/date_time"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_below="@id/Question_Content"
                 android:gravity="right"
                 android:textAlignment="gravity"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingLeft="30dp"
                 android:text="Date"
                 android:textSize="@dimen/textSize"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/Delete_Post"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:maxHeight="20dp"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone"
+                android:tint="?attr/colorPrimary" />
         </LinearLayout>
 
     </RelativeLayout>

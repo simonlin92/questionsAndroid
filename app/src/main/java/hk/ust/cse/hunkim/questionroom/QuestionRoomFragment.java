@@ -1,13 +1,17 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -17,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,6 +63,7 @@ public class QuestionRoomFragment extends Fragment {
     private ImageView sortImageView;
     private ImageView favImageView;
     private FloatingActionButton fab;
+    protected Activity mActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,6 +115,8 @@ public class QuestionRoomFragment extends Fragment {
                 setFav();
             }
         });
+
+
         setFav();
         // get the DB Helper
         dbutil = new DBUtil(new DBHelper(getActivity()));
@@ -159,6 +167,14 @@ public class QuestionRoomFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity=(Activity) context;
+        }
+
+    }
     public void sendMessage(Question question) {
         firebaseAdapter.getFirebase().push().setValue(question);
     }
@@ -191,6 +207,29 @@ public class QuestionRoomFragment extends Fragment {
 
         // Update SQLite DB
         dbutil.put(key, echo);
+    }
+
+    public void updateOrder(String key,final int order) {
+
+        final Firebase orderRef = firebaseAdapter.getFirebase().child(key).child("order");
+        orderRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        orderRef.setValue(order);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                }
+        );
+    }
+
+    public void deletePost(String key) {
+        final Firebase orderRef = firebaseAdapter.getFirebase().child(key);
+        orderRef.removeValue();
     }
 
     public void scrollToTop() {
@@ -257,7 +296,7 @@ public class QuestionRoomFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final QuestionViewHolder holder, int position) {
-            Question question = list.get(position);
+            final Question question = list.get(position);
             holder.title.setText(question.getHead());
             holder.newImage.setVisibility(question.isNewQuestion() ? View.VISIBLE : View.GONE);
             boolean echoUpClickable = !dbutil.contains(question.getKey(), true);
@@ -280,6 +319,44 @@ public class QuestionRoomFragment extends Fragment {
                         }
                     }
             );
+
+            holder.toFixedTop.setVisibility((AdminLoginFragment.admin )? View.VISIBLE : View.GONE);
+            holder.cancelFixedTop.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
+            holder.deletePost.setVisibility((AdminLoginFragment.admin)? View.VISIBLE : View.GONE);
+
+
+            holder.toFixedTop.setTag(question.getKey());
+            holder.toFixedTop.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            updateOrder((String) view.getTag(), 1);
+                            holder.fixedTop.setVisibility(View.VISIBLE);
+                            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
+                        }
+                    }
+            );
+            holder.cancelFixedTop.setTag(question.getKey());
+            holder.cancelFixedTop.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            updateOrder((String) view.getTag(), 0);
+                            holder.fixedTop.setVisibility(View.GONE);
+                            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
+                        }
+                    }
+            );
+
+            holder.deletePost.setTag(question.getKey());
+            holder.deletePost.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deletePost((String) view.getTag());
+                        }
+                    }
+            );
             holder.echoUp.setClickable(echoUpClickable && echoDownClickable);
             holder.echoUp.setEnabled(echoUpClickable && echoDownClickable);
             holder.echoDown.setClickable(echoUpClickable && echoDownClickable);
@@ -296,13 +373,26 @@ public class QuestionRoomFragment extends Fragment {
             }
             holder.echo.setText(String.valueOf(question.getEcho()));
             holder.date_Time.setText(String.valueOf(getDate(question.getTimestamp())));
-            if (question.getOrder() == 1) {
-                holder.fixedTop.setVisibility(View.VISIBLE);
-                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
-            } else {
-                holder.fixedTop.setVisibility(View.GONE);
-                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
-            }
+            FirebaseAdapter firebaseAdapter_order = new FirebaseAdapter(getActivity());
+            firebaseAdapter_order.setFirebase(firebaseAdapter_order.getFirebase().child(roomName).child("questions").child(question.getKey()).child("order"));
+            firebaseAdapter_order.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue()==null)
+                        return;
+                    if ((Long)dataSnapshot.getValue() == 1) {
+                        holder.fixedTop.setVisibility(View.VISIBLE);
+                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(mActivity.getApplicationContext(), R.color.FixedColor));
+                    } else {
+                        holder.fixedTop.setVisibility(View.GONE);
+                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(mActivity.getApplicationContext(), R.color.colorSub));
+                    }
+                }
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
             FirebaseAdapter firebaseAdapter = new FirebaseAdapter(getActivity());
             firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("replies").child(question.getKey()));
             firebaseAdapter.addValueEventListener(new ValueEventListener() {
@@ -324,6 +414,9 @@ public class QuestionRoomFragment extends Fragment {
         private final ImageView echoUp;
         private final ImageView echoDown;
         private final ImageView fixedTop;
+        private final ImageView toFixedTop;
+        private final ImageView cancelFixedTop;
+        private final ImageView deletePost;
         private final TextView title;
         private final TextView content;
         private final TextView echo;
@@ -337,6 +430,9 @@ public class QuestionRoomFragment extends Fragment {
             echoUp = (ImageView) v.findViewById(R.id.echoUp);
             echoDown = (ImageView) v.findViewById(R.id.echoDown);
             fixedTop = (ImageView) v.findViewById(R.id.FixedTop);
+            toFixedTop = (ImageView) v.findViewById(R.id.Set_Fixed);
+            cancelFixedTop = (ImageView) v.findViewById(R.id.Cancel_Fixed);
+            deletePost = (ImageView) v.findViewById(R.id.Delete_Post);
             title = (TextView) v.findViewById(R.id.Question_Title);
             content = (TextView) v.findViewById(R.id.Question_Content);
             echo = (TextView) v.findViewById(R.id.echo);
