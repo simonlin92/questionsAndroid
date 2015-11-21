@@ -64,6 +64,7 @@ public class AdminLoginFragment extends Fragment {
                 Login(false);
             }
         });
+        Login(admin);
 
 
         return coordinatorLayout;

@@ -1,17 +1,13 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -21,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,7 +58,6 @@ public class QuestionRoomFragment extends Fragment {
     private ImageView sortImageView;
     private ImageView favImageView;
     private FloatingActionButton fab;
-    protected Activity mActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -167,14 +161,6 @@ public class QuestionRoomFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof Activity){
-            mActivity=(Activity) context;
-        }
-
-    }
     public void sendMessage(Question question) {
         firebaseAdapter.getFirebase().push().setValue(question);
     }
@@ -209,7 +195,7 @@ public class QuestionRoomFragment extends Fragment {
         dbutil.put(key, echo);
     }
 
-    public void updateOrder(String key,final int order) {
+    public void updateOrder(String key, final int order) {
 
         final Firebase orderRef = firebaseAdapter.getFirebase().child(key).child("order");
         orderRef.addListenerForSingleValueEvent(
@@ -320,9 +306,9 @@ public class QuestionRoomFragment extends Fragment {
                     }
             );
 
-            holder.toFixedTop.setVisibility((AdminLoginFragment.admin )? View.VISIBLE : View.GONE);
+            holder.toFixedTop.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
             holder.cancelFixedTop.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
-            holder.deletePost.setVisibility((AdminLoginFragment.admin)? View.VISIBLE : View.GONE);
+            holder.deletePost.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
 
 
             holder.toFixedTop.setTag(question.getKey());
@@ -378,16 +364,17 @@ public class QuestionRoomFragment extends Fragment {
             firebaseAdapter_order.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.getValue()==null)
+                    if (dataSnapshot.getValue() == null)
                         return;
-                    if ((Long)dataSnapshot.getValue() == 1) {
+                    if ((Long) dataSnapshot.getValue() == 1) {
                         holder.fixedTop.setVisibility(View.VISIBLE);
-                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(mActivity.getApplicationContext(), R.color.FixedColor));
+                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
                     } else {
                         holder.fixedTop.setVisibility(View.GONE);
-                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(mActivity.getApplicationContext(), R.color.colorSub));
+                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
                     }
                 }
+
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
 
