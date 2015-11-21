@@ -76,7 +76,7 @@
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:maxHeight="20dp"
-                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
                 android:src="@drawable/ic_thumb_up_black_24dp"
                 android:tint="?attr/colorPrimary" />
 
@@ -87,7 +87,7 @@
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:maxHeight="20dp"
-                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
                 android:src="@drawable/ic_thumb_down_black_24dp"
                 android:tint="?attr/colorPrimary" />
 
@@ -95,13 +95,11 @@
                 android:id="@+id/echo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_below="@id/Question_Content"
-                android:layout_toRightOf="@id/echoUp"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="0"
-                android:textSize="20dp"
+                android:textSize="@dimen/textSize"
                 android:textStyle="bold" />
 
             <ImageView
@@ -115,6 +113,17 @@
                 android:tint="?attr/colorPrimary" />
 
             <TextView
+                android:id="@+id/replyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="0"
+                android:textSize="@dimen/textSize"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/date_time"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -124,7 +133,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="Date"
-                android:textSize="20dp"
+                android:textSize="@dimen/textSize"
                 android:textStyle="bold" />
         </LinearLayout>
 

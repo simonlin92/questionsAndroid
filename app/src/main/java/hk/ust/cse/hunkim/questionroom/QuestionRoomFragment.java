@@ -256,7 +256,7 @@ public class QuestionRoomFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(QuestionViewHolder holder, int position) {
+        public void onBindViewHolder(final QuestionViewHolder holder, int position) {
             Question question = list.get(position);
             holder.title.setText(question.getHead());
             holder.newImage.setVisibility(question.isNewQuestion() ? View.VISIBLE : View.GONE);
@@ -303,6 +303,19 @@ public class QuestionRoomFragment extends Fragment {
                 holder.fixedTop.setVisibility(View.GONE);
                 holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
             }
+            FirebaseAdapter firebaseAdapter = new FirebaseAdapter(getActivity());
+            firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("replies").child(question.getKey()));
+            firebaseAdapter.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    holder.replyCount.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
         }
     }
 
@@ -316,6 +329,7 @@ public class QuestionRoomFragment extends Fragment {
         private final TextView echo;
         private final TextView date_Time;
         private final RelativeLayout relativeLayout;
+        private final TextView replyCount;
 
         public QuestionViewHolder(View v) {
             super(v);
@@ -329,6 +343,7 @@ public class QuestionRoomFragment extends Fragment {
             date_Time = (TextView) v.findViewById(R.id.date_time);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.Question_TitlLayout);
             v.findViewById(R.id.reply).setOnClickListener(this);
+            replyCount = (TextView) v.findViewById(R.id.replyCount);
         }
 
         @Override

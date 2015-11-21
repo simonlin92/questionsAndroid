@@ -314,6 +314,7 @@ public class QuestionActivity extends AppCompatActivity {
             date_Time = (TextView) v.findViewById(R.id.date_time);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.Question_TitlLayout);
             v.findViewById(R.id.reply).setVisibility(View.GONE);
+            v.findViewById(R.id.replyCount).setVisibility(View.GONE);
         }
     }
 }
