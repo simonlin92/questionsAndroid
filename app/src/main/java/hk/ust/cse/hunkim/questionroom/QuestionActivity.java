@@ -159,6 +159,11 @@ public class QuestionActivity extends AppCompatActivity {
         firebaseAdapter.getFirebase().push().setValue(question);
     }
 
+    public void deletePost(String key) {
+        final Firebase orderRef = firebaseAdapter.getFirebase().child(key);
+        orderRef.removeValue();
+    }
+
     private void circularRevealActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             rootLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.DarkWhite));
@@ -235,14 +240,26 @@ public class QuestionActivity extends AppCompatActivity {
                         }
                     }
             );
+
+            holder.deletePost.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
+
+            holder.deletePost.setTag(question.getKey());
+            holder.deletePost.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deletePost((String) view.getTag());
+                        }
+                    }
+            );
             holder.echoUp.setClickable(echoUpClickable && echoDownClickable);
             holder.echoUp.setEnabled(echoUpClickable && echoDownClickable);
             holder.echoDown.setClickable(echoUpClickable && echoDownClickable);
             holder.echoDown.setEnabled(echoUpClickable && echoDownClickable);
             holder.echoUp.setColorFilter(ContextCompat.getColor(getApplicationContext(),
-                    echoUpClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    echoUpClickable ? R.color.colorSub : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             holder.echoDown.setColorFilter(ContextCompat.getColor(getApplicationContext(),
-                    echoDownClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    echoDownClickable ? R.color.colorSub : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             if (question.getDesc() == null || question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
             else {
@@ -252,11 +269,9 @@ public class QuestionActivity extends AppCompatActivity {
             holder.echo.setText(String.valueOf(question.getEcho()));
             holder.date_Time.setText(String.valueOf(getDate(question.getTimestamp())));
             if (question.getOrder() == 1) {
-                holder.fixedTop.setVisibility(View.VISIBLE);
-                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.FixedColor));
+                holder.color.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.FixedColor));
             } else {
-                holder.fixedTop.setVisibility(View.GONE);
-                holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorSub));
+                holder.color.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorSub));
             }
         }
     }
@@ -295,26 +310,26 @@ public class QuestionActivity extends AppCompatActivity {
         private final ImageView newImage;
         private final ImageView echoUp;
         private final ImageView echoDown;
-        private final ImageView fixedTop;
         private final TextView title;
         private final TextView content;
         private final TextView echo;
         private final TextView date_Time;
-        private final RelativeLayout relativeLayout;
+        private final View color;
+        private final ImageView deletePost;
 
         public QuestionViewHolder(View v) {
             super(v);
             newImage = (ImageView) v.findViewById(R.id.Question_New);
             echoUp = (ImageView) v.findViewById(R.id.echoUp);
             echoDown = (ImageView) v.findViewById(R.id.echoDown);
-            fixedTop = (ImageView) v.findViewById(R.id.FixedTop);
             title = (TextView) v.findViewById(R.id.Question_Title);
             content = (TextView) v.findViewById(R.id.Question_Content);
             echo = (TextView) v.findViewById(R.id.echo);
             date_Time = (TextView) v.findViewById(R.id.date_time);
-            relativeLayout = (RelativeLayout) v.findViewById(R.id.Question_TitlLayout);
+            color = v.findViewById(R.id.question_color);
             v.findViewById(R.id.reply).setVisibility(View.GONE);
             v.findViewById(R.id.replyCount).setVisibility(View.GONE);
+            deletePost = (ImageView) v.findViewById(R.id.Delete_Post);
         }
     }
 }

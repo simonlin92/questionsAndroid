@@ -24,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -317,8 +316,7 @@ public class QuestionRoomFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             updateOrder((String) view.getTag(), 1);
-                            holder.fixedTop.setVisibility(View.VISIBLE);
-                            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
+                            holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
                         }
                     }
             );
@@ -328,8 +326,7 @@ public class QuestionRoomFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             updateOrder((String) view.getTag(), 0);
-                            holder.fixedTop.setVisibility(View.GONE);
-                            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
+                            holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
                         }
                     }
             );
@@ -348,9 +345,9 @@ public class QuestionRoomFragment extends Fragment {
             holder.echoDown.setClickable(echoUpClickable && echoDownClickable);
             holder.echoDown.setEnabled(echoUpClickable && echoDownClickable);
             holder.echoUp.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
-                    echoUpClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    echoUpClickable ? R.color.colorSub : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             holder.echoDown.setColorFilter(ContextCompat.getColor(getActivity().getApplicationContext(),
-                    echoDownClickable ? R.color.colorPrimary : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    echoDownClickable ? R.color.colorSub : R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             if (question.getDesc() == null || question.getDesc().isEmpty())
                 holder.content.setVisibility(View.GONE);
             else {
@@ -367,11 +364,9 @@ public class QuestionRoomFragment extends Fragment {
                     if (dataSnapshot.getValue() == null)
                         return;
                     if ((Long) dataSnapshot.getValue() == 1) {
-                        holder.fixedTop.setVisibility(View.VISIBLE);
-                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
+                        holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
                     } else {
-                        holder.fixedTop.setVisibility(View.GONE);
-                        holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
+                        holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
                     }
                 }
 
@@ -400,7 +395,6 @@ public class QuestionRoomFragment extends Fragment {
         private final ImageView newImage;
         private final ImageView echoUp;
         private final ImageView echoDown;
-        private final ImageView fixedTop;
         private final ImageView toFixedTop;
         private final ImageView cancelFixedTop;
         private final ImageView deletePost;
@@ -408,7 +402,7 @@ public class QuestionRoomFragment extends Fragment {
         private final TextView content;
         private final TextView echo;
         private final TextView date_Time;
-        private final RelativeLayout relativeLayout;
+        private final View color;
         private final TextView replyCount;
 
         public QuestionViewHolder(View v) {
@@ -416,7 +410,6 @@ public class QuestionRoomFragment extends Fragment {
             newImage = (ImageView) v.findViewById(R.id.Question_New);
             echoUp = (ImageView) v.findViewById(R.id.echoUp);
             echoDown = (ImageView) v.findViewById(R.id.echoDown);
-            fixedTop = (ImageView) v.findViewById(R.id.FixedTop);
             toFixedTop = (ImageView) v.findViewById(R.id.Set_Fixed);
             cancelFixedTop = (ImageView) v.findViewById(R.id.Cancel_Fixed);
             deletePost = (ImageView) v.findViewById(R.id.Delete_Post);
@@ -424,7 +417,7 @@ public class QuestionRoomFragment extends Fragment {
             content = (TextView) v.findViewById(R.id.Question_Content);
             echo = (TextView) v.findViewById(R.id.echo);
             date_Time = (TextView) v.findViewById(R.id.date_time);
-            relativeLayout = (RelativeLayout) v.findViewById(R.id.Question_TitlLayout);
+            color = v.findViewById(R.id.question_color);
             v.findViewById(R.id.reply).setOnClickListener(this);
             replyCount = (TextView) v.findViewById(R.id.replyCount);
         }
