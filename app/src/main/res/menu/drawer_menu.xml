@@ -18,5 +18,11 @@
             android:checked="false"
             android:icon="@drawable/setting"
             android:title="Setting" />
+        <item
+            android:id="@+id/menu_login"
+            android:checkable="true"
+            android:checked="false"
+            android:icon="@drawable/admin"
+            android:title="Admin Login" />
     </group>
 </menu>

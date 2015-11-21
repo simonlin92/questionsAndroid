@@ -121,6 +121,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
                 if (!(fragment instanceof RoomListFragment))
                     fragmentTransaction(new RoomListFragment());
                 break;
+
             case R.id.menu_option:
                 if (!(fragment instanceof OptionFragment))
                     fragmentTransaction(new OptionFragment());
@@ -129,6 +130,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_favourite:
                 String roomName = OptionFragment.readFavRoom(this);
                 enterRoom(roomName);
+                break;
+
+            case R.id.menu_login:
+                if (!(fragment instanceof AdminLoginFragment))
+                    fragmentTransaction(new AdminLoginFragment());
                 break;
         }
     }
