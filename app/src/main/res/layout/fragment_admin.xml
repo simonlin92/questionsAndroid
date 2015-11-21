@@ -57,8 +57,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
-            android:text="@string/EnterButton"
+            android:text="@string/LoginButton"
             android:textColor="@color/White" />
+
+        <TextView
+            android:id="@+id/admin_logoutText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You have logged-in."
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/textSize"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/admin_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:text="@string/LogoutButton"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/White"
+            android:visibility="gone" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

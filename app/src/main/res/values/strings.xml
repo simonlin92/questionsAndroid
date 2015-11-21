@@ -15,6 +15,8 @@
     <string name="closeDrawer">Close Drawer</string>
     <string name="roomlist_banner">Banner</string>
     <string name="EnterButton">Enter</string>
+    <string name="LoginButton">Login</string>
+    <string name="LogoutButton">Logout</string>
     <string name="RoomListLimit">Room list limit:</string>
     <string name="QuestionSort">Questoin sort:</string>
     <string name="FavouriteRoom">Favourite Room:</string>

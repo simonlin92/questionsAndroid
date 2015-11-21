@@ -15,21 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-public class AdminLoginFragment extends Fragment{
-    Firebase ref = new Firebase("https://flickering-torch-4928.firebaseio.com/");
-    AuthData authData = ref.getAuth();
+import hk.ust.cse.hunkim.questionroom.firebase.FirebaseAdapter;
+
+public class AdminLoginFragment extends Fragment {
+    public static boolean admin = false;
+    private FirebaseAdapter ref;
     private CoordinatorLayout coordinatorLayout;
     private EditText adminNameEditText;
     private EditText passwordEditText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ref = new FirebaseAdapter(getActivity());
         coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_admin, container, false);
         initialToolbar();
         initialDrawer();
@@ -39,11 +43,10 @@ public class AdminLoginFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 hideKeyboard();
-                ref.authWithPassword(adminNameEditText.getText().toString(), passwordEditText.getText().toString(), new Firebase.AuthResultHandler() {
+                ref.getFirebase().authWithPassword(adminNameEditText.getText().toString(), passwordEditText.getText().toString(), new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        Snackbar snackbar = Snackbar.make(coordinatorLayout, "You have logged in.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        Login(true);
                     }
 
                     @Override
@@ -55,8 +58,40 @@ public class AdminLoginFragment extends Fragment{
             }
         });
 
+        findViewById(R.id.admin_logout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Login(false);
+            }
+        });
+
 
         return coordinatorLayout;
+    }
+
+    private void Login(boolean login) {
+        admin = login;
+        if (admin) {
+            ((ImageView) getActivity().findViewById(R.id.profile_image)).setImageResource(R.drawable.admin_img);
+            ((TextView) getActivity().findViewById(R.id.profile_name)).setText("Administrator");
+            adminNameEditText.setVisibility(View.GONE);
+            adminNameEditText.setText("");
+            passwordEditText.setVisibility(View.GONE);
+            adminNameEditText.setText("");
+            findViewById(R.id.admin_submit).setVisibility(View.GONE);
+            findViewById(R.id.admin_logout).setVisibility(View.VISIBLE);
+            findViewById(R.id.admin_logoutText).setVisibility(View.VISIBLE);
+
+        } else {
+            ((ImageView) getActivity().findViewById(R.id.profile_image)).setImageResource(R.drawable.user_img);
+            ((TextView) getActivity().findViewById(R.id.profile_name)).setText("User");
+            adminNameEditText.setVisibility(View.VISIBLE);
+            passwordEditText.setVisibility(View.VISIBLE);
+            findViewById(R.id.admin_submit).setVisibility(View.VISIBLE);
+            findViewById(R.id.admin_logout).setVisibility(View.GONE);
+            findViewById(R.id.admin_logoutText).setVisibility(View.GONE);
+        }
+
     }
 
     private void initialToolbar() {
@@ -69,6 +104,7 @@ public class AdminLoginFragment extends Fragment{
         }
 
     }
+
     private View findViewById(int id) {
         return coordinatorLayout.findViewById(id);
     }
@@ -98,5 +134,4 @@ public class AdminLoginFragment extends Fragment{
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-
 }

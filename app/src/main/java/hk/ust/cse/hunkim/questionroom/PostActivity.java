@@ -43,8 +43,8 @@ public class PostActivity extends AppCompatActivity {
         String roomName = "";
         if (extras != null) {
             roomName = extras.getString(TITLE_KEY);
-            fabX = extras.getInt(FABX_KEY);
-            fabY = extras.getInt(FABY_KEY);
+            fabX = extras.getInt(FABX_KEY, -1);
+            fabY = extras.getInt(FABY_KEY, -1);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

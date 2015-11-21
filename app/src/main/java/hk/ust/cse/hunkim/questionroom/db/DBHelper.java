@@ -4,9 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by hunkim on 7/15/15.
- */
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME = "echoed";

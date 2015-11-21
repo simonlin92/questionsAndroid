@@ -16,12 +16,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,7 +40,6 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     private RecyclerView recyclerView;
     private RoomListAdapter adapter;
     private List<Room> dataSet;
-    private MenuItem searchItem;
     private CoordinatorLayout coordinatorLayout;
 
     @Override
@@ -71,7 +72,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.base_menu, menu);
-        searchItem = menu.findItem(R.id.menu_search);
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint("Enter Room Name");
         MenuItemCompat.setOnActionExpandListener(searchItem, this);
