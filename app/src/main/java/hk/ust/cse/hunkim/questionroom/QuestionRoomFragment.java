@@ -1,6 +1,7 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -12,10 +13,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +47,7 @@ import hk.ust.cse.hunkim.questionroom.question.Question;
 import hk.ust.cse.hunkim.questionroom.question.QuestionChildEventListener;
 import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
 import hk.ust.cse.hunkim.questionroom.question.QuestionValueEventListener;
+import hk.ust.cse.hunkim.questionroom.room.RoomValueEventListener;
 
 public class QuestionRoomFragment extends Fragment {
     public static final String ROOM_NAME = "Room_name";
@@ -109,6 +114,34 @@ public class QuestionRoomFragment extends Fragment {
             }
         });
 
+        findViewById(R.id.questionroom_pass).setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.questionroom_pass).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Set Password");
+
+                final EditText input = new EditText(getContext());
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setPassword(roomName,input.getText().toString(),true);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
 
         setFav();
         // get the DB Helper
@@ -160,7 +193,28 @@ public class QuestionRoomFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setPassword(String roomName, final String password, final boolean overwrite) {
+        final FirebaseAdapter passfirebaseAdapter = new FirebaseAdapter(getActivity());
+        passfirebaseAdapter.setFirebase(passfirebaseAdapter.getFirebase().child(roomName).child(RoomValueEventListener.PASSWORD_KEY));
+        passfirebaseAdapter.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (overwrite)
+                    passfirebaseAdapter.getFirebase().setValue(password);
+                else if (dataSnapshot.getValue() == null)
+                    passfirebaseAdapter.getFirebase().setValue(password);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+    }
+
     public void sendMessage(Question question) {
+        setPassword(roomName, "", false);
         firebaseAdapter.getFirebase().push().setValue(question);
     }
 

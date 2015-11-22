@@ -34,6 +34,17 @@
                 android:layout_marginStart="10dp"
                 android:src="@drawable/star"
                 android:tint="@color/White" />
+
+            <ImageView
+                android:id="@+id/questionroom_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/lock"
+                android:tint="@color/White" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
