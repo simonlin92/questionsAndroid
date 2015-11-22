@@ -5,7 +5,7 @@
             android:checkable="true"
             android:checked="true"
             android:icon="@drawable/list"
-            android:title="Rooms List" />
+            android:title="Room" />
         <item
             android:id="@+id/menu_favourite"
             android:checkable="true"
@@ -23,6 +23,6 @@
             android:checkable="true"
             android:checked="false"
             android:icon="@drawable/admin"
-            android:title="Admin Login" />
+            android:title="Admin" />
     </group>
 </menu>

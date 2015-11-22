@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="2dp"
     android:clickable="true"
-    app:cardCornerRadius="5dp"
-    android:layout_margin="2dp">
+    app:cardCornerRadius="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,23 +26,23 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:id="@+id/card_room_lock"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:adjustViewBounds="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             android:layout_weight="2"
+            android:adjustViewBounds="true"
             android:src="@drawable/lock"
-            android:tint="@color/colorAccent"/>
+            android:tint="@color/colorAccent" />
 
         <TextView
             android:id="@+id/card_room_count"
             android:layout_width="70dp"
-            android:minWidth="50dp"
             android:layout_height="match_parent"
             android:background="@color/colorSub"
             android:gravity="center"
+            android:minWidth="50dp"
             android:padding="10dp"
             android:text="0"
             android:textColor="@android:color/white"

@@ -14,25 +14,27 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
+
             <ImageView
                 android:id="@+id/questionroom_sort"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:tint="@color/White"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_gravity="end"
-                android:src="@drawable/time_asc"/>
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/time_asc"
+                android:tint="@color/White" />
+
             <ImageView
                 android:id="@+id/questionroom_fav"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:tint="@color/White"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_gravity="end"
-                android:src="@drawable/star"/>
-            </android.support.v7.widget.Toolbar>
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/star"
+                android:tint="@color/White" />
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 

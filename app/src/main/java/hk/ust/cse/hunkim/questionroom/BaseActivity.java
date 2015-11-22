@@ -1,5 +1,6 @@
 package hk.ust.cse.hunkim.questionroom;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
@@ -35,6 +37,18 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             Fragment newFragment = new RoomListFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.main_fragment, newFragment).commit();
+        }
+
+        onNewIntent(getIntent());
+    }
+
+    protected void onNewIntent(Intent intent) {
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            String roomName = data.substring(data.lastIndexOf("/") + 1);
+            if(roomName!=null)
+                enterRoom(roomName);
         }
     }
 

@@ -16,17 +16,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
             <ImageView
                 android:id="@+id/sendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_gravity="end"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
                 android:src="@drawable/ic_send_black_24dp"
                 android:tint="@color/White" />
-            </android.support.v7.widget.Toolbar>
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -60,9 +61,9 @@
             android:id="@+id/question_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:gravity="top"
             android:layout_weight="1"
-            android:inputType="textMultiLine"/>
+            android:gravity="top"
+            android:inputType="textMultiLine" />
 
 
     </LinearLayout>
