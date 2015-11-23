@@ -269,7 +269,7 @@ public class QuestionActivity extends AppCompatActivity {
             holder.echo.setText(String.valueOf(question.getEcho()));
             holder.date_Time.setText(String.valueOf(getDate(question.getTimestamp())));
             if (question.getOrder() == 1) {
-                holder.color.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.FixedColor));
+                holder.color.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccentDark));
             } else {
                 holder.color.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorSub));
             }

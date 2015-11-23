@@ -370,7 +370,7 @@ public class QuestionRoomFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             updateOrder((String) view.getTag(), 1);
-                            holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
+                            holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorAccentDark));
                         }
                     }
             );
@@ -418,7 +418,7 @@ public class QuestionRoomFragment extends Fragment {
                     if (dataSnapshot.getValue() == null)
                         return;
                     if ((Long) dataSnapshot.getValue() == 1) {
-                        holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.FixedColor));
+                        holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorAccentDark));
                     } else {
                         holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
                     }
