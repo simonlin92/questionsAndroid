@@ -15,6 +15,10 @@ public class Room {
         this(name, questionCount, "");
     }
 
+    public static boolean isNameValid(String roomName) {
+        return !roomName.matches("^.*[^a-zA-Z0-9 ].*$");
+    }
+
     public boolean hasPassword() {
         return !password.isEmpty();
     }
@@ -26,9 +30,5 @@ public class Room {
         if (!(other instanceof Room)) return false;
         Room otherRoom = (Room) other;
         return name.equals(otherRoom.name) && questionCount == otherRoom.questionCount;
-    }
-
-    public static boolean isNameValid(String roomName) {
-        return !roomName.matches("^.*[^a-zA-Z0-9 ].*$");
     }
 }

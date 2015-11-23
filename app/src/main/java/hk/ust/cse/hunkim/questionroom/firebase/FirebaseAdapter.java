@@ -27,11 +27,11 @@ public class FirebaseAdapter {
         firebase.addValueEventListener(valueEventListener);
     }
 
-    public void setFirebase(Firebase firebase) {
-        this.firebase = firebase;
-    }
-
     public Firebase getFirebase() {
         return firebase;
+    }
+
+    public void setFirebase(Firebase firebase) {
+        this.firebase = firebase;
     }
 }

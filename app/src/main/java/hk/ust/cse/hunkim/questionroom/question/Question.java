@@ -7,7 +7,7 @@ import hk.ust.cse.hunkim.questionroom.QuestionRoomFragment;
 /**
  * Created by hunkim on 7/16/15.
  */
-public class Question implements Comparable<Question> {
+public class Question {
 
     /**
      * Must be synced with firebase JSON structure
@@ -25,22 +25,7 @@ public class Question implements Comparable<Question> {
     private int echo;
     private int order;
     private boolean newQuestion;
-
-    public enum sort_order {
-        timestamp,
-        echo
-    }
-
-    public String getDateString() {
-        return dateString;
-    }
-
     private String dateString;
-
-    public String getTrustedDesc() {
-        return trustedDesc;
-    }
-
     private String trustedDesc;
 
     // Required default constructor for Firebase object mapping
@@ -95,6 +80,14 @@ public class Question implements Comparable<Question> {
         if (index == -1)
             return message;
         return message.substring(0, index + 1);
+    }
+
+    public String getDateString() {
+        return dateString;
+    }
+
+    public String getTrustedDesc() {
+        return trustedDesc;
     }
 
     /* -------------------- Getters ------------------- */
@@ -155,47 +148,6 @@ public class Question implements Comparable<Question> {
         this.key = key;
     }
 
-    /**
-     * New one/high echo goes bottom
-     *
-     * @param other other chat
-     * @return order
-     */
-    @Override
-    public int compareTo(Question other) {
-        // Push new on top
-
-        other.updateNewQuestion(); // update NEW button
-        this.updateNewQuestion();
-        /*
-        if (this.newQuestion != other.newQuestion) {
-            return this.newQuestion ? 1 : -1; // this is the winner
-        }*/
-
-        sort_order currentSort = sort_order.valueOf(QuestionRoomFragment.sort_type);
-        switch (currentSort) {
-            case timestamp:
-                if (other.timestamp == this.timestamp) {
-                    return 0;
-                }
-                return other.timestamp > this.timestamp ? -1 : 1;
-            case echo:
-                if (this.echo == other.echo) {
-                    if (other.timestamp == this.timestamp) {
-                        return 0;
-                    }
-                    return other.timestamp > this.timestamp ? -1 : 1;
-                }
-                return this.echo - other.echo;
-            default:
-                if (other.timestamp == this.timestamp) {
-                    return 0;
-                }
-                return other.timestamp > this.timestamp ? -1 : 1;
-        }
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Question)) {
@@ -203,10 +155,5 @@ public class Question implements Comparable<Question> {
         }
         Question other = (Question) o;
         return key.equals(other.key) && echo == other.echo;
-    }
-
-    @Override
-    public int hashCode() {
-        return key.hashCode();
     }
 }

@@ -45,7 +45,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         String data = intent.getDataString();
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             String roomName = data.substring(data.lastIndexOf("/") + 1);
-            if(roomName!=null)
+            if (roomName != null)
                 enterRoom(roomName);
         }
     }

@@ -35,6 +35,21 @@ public class OptionFragment extends Fragment {
     private QuestionSort questionSort;
     private EditText favEditText;
 
+    public static String readFavRoom(Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getString(favPrefKey, defaultFavRoom);
+    }
+
+    public static boolean putFavRoom(Activity activity, String favRoom) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (!Room.isNameValid(favRoom) || favRoom.isEmpty())
+            return false;
+        editor.putString(favPrefKey, favRoom);
+        editor.apply();
+        return true;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         coordinatorLayout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_option, container, false);
@@ -76,21 +91,6 @@ public class OptionFragment extends Fragment {
             limitEditText.setText(String.valueOf(limit));
         favEditText.setText(sharedPref.getString(favPrefKey, defaultFavRoom));
         return coordinatorLayout;
-    }
-
-    public static String readFavRoom(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        return sharedPref.getString(favPrefKey, defaultFavRoom);
-    }
-
-    public static boolean putFavRoom(Activity activity, String favRoom) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        if (!Room.isNameValid(favRoom) || favRoom.isEmpty())
-            return false;
-        editor.putString(favPrefKey, favRoom);
-        editor.apply();
-        return true;
     }
 
     private void savePref() {

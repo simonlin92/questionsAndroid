@@ -5,11 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by hunkim on 7/15/15.
- */
 public class DBUtil {
-    SQLiteOpenHelper helper;
+    private SQLiteOpenHelper helper;
 
     public DBUtil(SQLiteOpenHelper helper) {
         this.helper = helper;

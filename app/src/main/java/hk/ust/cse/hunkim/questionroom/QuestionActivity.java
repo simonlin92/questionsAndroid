@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -204,6 +203,63 @@ public class QuestionActivity extends AppCompatActivity {
 
     //=====================================Private Class=====================================
 
+    public void updateEcho(String key, final int value, boolean echo) {
+        if (dbutil.contains(key, true) || dbutil.contains(key, false))
+            return;
+
+        final Firebase echoRef = firebaseAdapter.getFirebase().child(key).child("echo");
+        echoRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Long echoValue = (Long) dataSnapshot.getValue();
+                        echoRef.setValue(echoValue + value);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                }
+        );
+
+        // Update SQLite DB
+        dbutil.put(key, echo);
+    }
+
+    private String getDate(long time) {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(time);
+        return DateFormat.format("HH:mm dd/MM", cal).toString();
+    }
+
+    private static class QuestionViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView newImage;
+        private final ImageView echoUp;
+        private final ImageView echoDown;
+        private final TextView title;
+        private final TextView content;
+        private final TextView echo;
+        private final TextView date_Time;
+        private final View color;
+        private final ImageView deletePost;
+
+        public QuestionViewHolder(View v) {
+            super(v);
+            newImage = (ImageView) v.findViewById(R.id.Question_New);
+            echoUp = (ImageView) v.findViewById(R.id.echoUp);
+            echoDown = (ImageView) v.findViewById(R.id.echoDown);
+            title = (TextView) v.findViewById(R.id.Question_Title);
+            content = (TextView) v.findViewById(R.id.Question_Content);
+            echo = (TextView) v.findViewById(R.id.echo);
+            date_Time = (TextView) v.findViewById(R.id.date_time);
+            color = v.findViewById(R.id.question_color);
+            v.findViewById(R.id.reply).setVisibility(View.GONE);
+            v.findViewById(R.id.replyCount).setVisibility(View.GONE);
+            deletePost = (ImageView) v.findViewById(R.id.Delete_Post);
+        }
+    }
+
     private class QuestionListAdapter extends RecyclerViewAnimateAdapter<Question, QuestionViewHolder> {
         public QuestionListAdapter(List<Question> list) {
             super(list);
@@ -273,63 +329,6 @@ public class QuestionActivity extends AppCompatActivity {
             } else {
                 holder.color.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorSub));
             }
-        }
-    }
-
-    public void updateEcho(String key, final int value, boolean echo) {
-        if (dbutil.contains(key, true) || dbutil.contains(key, false))
-            return;
-
-        final Firebase echoRef = firebaseAdapter.getFirebase().child(key).child("echo");
-        echoRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Long echoValue = (Long) dataSnapshot.getValue();
-                        echoRef.setValue(echoValue + value);
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                }
-        );
-
-        // Update SQLite DB
-        dbutil.put(key, echo);
-    }
-
-    private String getDate(long time) {
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(time);
-        return DateFormat.format("HH:mm dd/MM", cal).toString();
-    }
-
-    private static class QuestionViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView newImage;
-        private final ImageView echoUp;
-        private final ImageView echoDown;
-        private final TextView title;
-        private final TextView content;
-        private final TextView echo;
-        private final TextView date_Time;
-        private final View color;
-        private final ImageView deletePost;
-
-        public QuestionViewHolder(View v) {
-            super(v);
-            newImage = (ImageView) v.findViewById(R.id.Question_New);
-            echoUp = (ImageView) v.findViewById(R.id.echoUp);
-            echoDown = (ImageView) v.findViewById(R.id.echoDown);
-            title = (TextView) v.findViewById(R.id.Question_Title);
-            content = (TextView) v.findViewById(R.id.Question_Content);
-            echo = (TextView) v.findViewById(R.id.echo);
-            date_Time = (TextView) v.findViewById(R.id.date_time);
-            color = v.findViewById(R.id.question_color);
-            v.findViewById(R.id.reply).setVisibility(View.GONE);
-            v.findViewById(R.id.replyCount).setVisibility(View.GONE);
-            deletePost = (ImageView) v.findViewById(R.id.Delete_Post);
         }
     }
 }

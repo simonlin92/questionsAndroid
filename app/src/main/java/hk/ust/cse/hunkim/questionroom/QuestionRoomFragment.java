@@ -128,7 +128,7 @@ public class QuestionRoomFragment extends Fragment {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        setPassword(roomName,input.getText().toString(),true);
+                        setPassword(roomName, input.getText().toString(), true);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

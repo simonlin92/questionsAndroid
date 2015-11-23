@@ -10,30 +10,11 @@ import hk.ust.cse.hunkim.questionroom.R;
 
 public class QuestionSort {
     public static final Order defaultSort = Order.TIME_DESC;
-    private Activity activity;
     private static final String prefKey = "QuestionSortOrder";
+    private Activity activity;
 
     public QuestionSort(Activity activity) {
         this.activity = activity;
-    }
-
-    public void saveSort(Order sort) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(prefKey, sort.getValue());
-        editor.apply();
-    }
-
-    public Comparator<? super Question> readSort() {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int num = sharedPref.getInt(prefKey, defaultSort.getValue());
-        return getComparator(intToEnum(num));
-    }
-
-    public Order readSortByEnum() {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int num = sharedPref.getInt(prefKey, defaultSort.getValue());
-        return intToEnum(num);
     }
 
     public static Comparator<? super Question> getComparator(Order sort) {
@@ -56,6 +37,25 @@ public class QuestionSort {
                 return o;
         }
         return defaultSort;
+    }
+
+    public void saveSort(Order sort) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(prefKey, sort.getValue());
+        editor.apply();
+    }
+
+    public Comparator<? super Question> readSort() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int num = sharedPref.getInt(prefKey, defaultSort.getValue());
+        return getComparator(intToEnum(num));
+    }
+
+    public Order readSortByEnum() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int num = sharedPref.getInt(prefKey, defaultSort.getValue());
+        return intToEnum(num);
     }
 
     public enum Order {
