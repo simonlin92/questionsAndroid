@@ -1,13 +1,9 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.test.suitebuilder.annotation.SmallTest;
-
 import junit.framework.TestCase;
-
 import java.util.Date;
-
 import hk.ust.cse.hunkim.questionroom.question.Question;
-import hk.ust.cse.hunkim.questionroom.room.Room;
 
 public class QuestionTest extends TestCase {
 

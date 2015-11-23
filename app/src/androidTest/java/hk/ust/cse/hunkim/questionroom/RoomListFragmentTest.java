@@ -1,16 +1,27 @@
 package hk.ust.cse.hunkim.questionroom;
 
+import android.app.Instrumentation;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.test.suitebuilder.annotation.SmallTest;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class RoomListFragmentTest extends ActivityInstrumentationTestCase2<BaseActivity> {
 
-    private BaseActivity baseActivity;
     private NavigationView navigationView;
     private RoomListFragment roomListFragment;
+    private DrawerLayout drawerLayout;
 
     public RoomListFragmentTest() {
         super(BaseActivity.class);
@@ -23,26 +34,63 @@ public class RoomListFragmentTest extends ActivityInstrumentationTestCase2<BaseA
         //wait for database access
         try { Thread.sleep(5000);} catch (InterruptedException e) {};
 
-        baseActivity = getActivity();
         navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
+        drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+
         roomListFragment = (RoomListFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.main_fragment);
     }
 
-    @SmallTest
-    public void testPreconditions() {
-        assertNotNull("Base Activity is not null", baseActivity);
-        assertNotNull("NavigationView is not null", navigationView);
-    }
-
-    @MediumTest
+   /* @MediumTest
     public void testEnterRoom() {
-        baseActivity.enterRoom(OptionFragment.defaultFavRoom);
+        getActivity().enterRoom(OptionFragment.defaultFavRoom);
         //wait for database onDataChange
         try {Thread.sleep(5000); } catch (Exception e) {};
-    }
+    }*/
 
     @MediumTest
-    public void testOnQueryTextSubmi() {
+    public void testEnterPrivateRoom() {
+
+        getActivity().enterRoom(OptionFragment.defaultFavRoom);
+        try { Thread.sleep(5000);} catch (InterruptedException e) {};
+        QuestionRoomFragment questionRoomFragment = (QuestionRoomFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+
+        questionRoomFragment.setPassword(OptionFragment.defaultFavRoom + " private", "1234", true);
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        Menu menu = navigationView.getMenu();
+        final MenuItem loginMenu = menu.findItem(R.id.menu_roomlist);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().onNavigationItemSelected(loginMenu);
+            }
+        });
+
+        getActivity().enterRoom(OptionFragment.defaultFavRoom + " private");
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+
+        onView(withId(R.id.privateroom_password)).perform(typeText("1234"), closeSoftKeyboard());
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+        onView(withId(R.id.privateroom_submit)).perform(click());
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+    }
+/*
+    @MediumTest
+    public void testOnQueryTextSubmit() {
         roomListFragment.onQueryTextSubmit("all");
         try {Thread.sleep(2000); } catch (Exception e) {};
         roomListFragment.onQueryTextSubmit("!@#$%^&*()");
@@ -71,5 +119,5 @@ public class RoomListFragmentTest extends ActivityInstrumentationTestCase2<BaseA
         });
         getInstrumentation().waitForIdleSync();
     }
-
+*/
 }

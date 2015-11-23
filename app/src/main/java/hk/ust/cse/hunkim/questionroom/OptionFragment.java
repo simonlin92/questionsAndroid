@@ -27,7 +27,7 @@ public class OptionFragment extends Fragment {
     public static final String limitPrefKey = "RoomListLimit";
     public static final String favPrefKey = "FavouriteRoom";
     public static final int defaultLimit = 0;
-    public static final String defaultFavRoom = "all1";
+    public static final String defaultFavRoom = "all";
     private CoordinatorLayout coordinatorLayout;
     private SharedPreferences sharedPref;
     private EditText limitEditText;

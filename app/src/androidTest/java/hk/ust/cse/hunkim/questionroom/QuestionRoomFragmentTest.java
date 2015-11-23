@@ -1,53 +1,23 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Instrumentation;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
-import android.support.design.widget.FloatingActionButton;
-//import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.design.widget.NavigationView;
-import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
-import static android.support.test.espresso.Espresso.onData;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static org.hamcrest.Matchers.allOf;
-import static android.support.test.espresso.matcher.PreferenceMatchers.withTitle;
-import static org.hamcrest.Matchers.instanceOf;
-
-import hk.ust.cse.hunkim.questionroom.question.Question;
-import hk.ust.cse.hunkim.questionroom.question.QuestionSort;
 
 public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<BaseActivity> {
 
@@ -95,7 +65,7 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
     @MediumTest
     public void testReplyQuestion() {
         testSendQuestion();
-        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+        try { Thread.sleep(5000);} catch (InterruptedException e) {};
         Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(QuestionActivity.class.getName(), null, false);
 
         final RecyclerView  recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
@@ -107,12 +77,15 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
                 ImageView replyView = (ImageView) recyclerView.getChildAt(0).findViewById(R.id.reply);
                 assertNotNull("Reply View is not null", replyView);
                 replyView.performClick();
+                try { Thread.sleep(2000);} catch (InterruptedException e) {};
                 ImageView likeView = (ImageView) recyclerView.getChildAt(0).findViewById(R.id.echoUp);
                 assertNotNull("Like button is not null", likeView);
                 likeView.performClick();
+                try { Thread.sleep(2000);} catch (InterruptedException e) {};
                 ImageView dislikeView = (ImageView) recyclerView.getChildAt(0).findViewById(R.id.echoDown);
                 assertNotNull("Dislike button is not null", dislikeView);
                 dislikeView.performClick();
+                try { Thread.sleep(2000);} catch (InterruptedException e) {};
             }
         }));
         getInstrumentation().waitForIdleSync();
@@ -120,6 +93,7 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
         QuestionActivity questionActivity = (QuestionActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,5000);
         //test small functions
         questionActivity.deletePost("");
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
         questionActivity.updateEcho("", 0, false);
 
         try { Thread.sleep(2000);} catch (InterruptedException e) {};
@@ -185,5 +159,10 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
             }
         }));
         getInstrumentation().waitForIdleSync();
+
+        //test set password
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+        onView(withId(R.id.questionroom_pass)).perform(click());
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
     }
 }

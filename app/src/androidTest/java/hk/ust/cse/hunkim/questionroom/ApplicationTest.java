@@ -2,7 +2,6 @@ package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
-
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
