@@ -16,8 +16,12 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
     @Test
     public void testLocal()throws Exception {
-        Class<?> test = Class.forName("hk.ust.cse.hunkim.questionroom.RoomTest");
-        JUnitCore junit = new JUnitCore();
-        junit.run(test);
+        Class<?> roomTest = Class.forName("hk.ust.cse.hunkim.questionroom.RoomTest");
+        JUnitCore junit1 = new JUnitCore();
+        junit1.run(roomTest);
+
+        Class<?> questionTest = Class.forName("hk.ust.cse.hunkim.questionroom.QuestionTest");
+        JUnitCore junit2 = new JUnitCore();
+        junit2.run(questionTest);
     }
 }

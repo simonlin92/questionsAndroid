@@ -1,6 +1,7 @@
 package hk.ust.cse.hunkim.questionroom;
 
 import android.app.Instrumentation;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -52,6 +53,7 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private QuestionRoomFragment questionRoomFragment;
 
     public QuestionRoomFragmentTest() {
         super(BaseActivity.class);
@@ -66,6 +68,15 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
 
         navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
         drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+
+        questionRoomFragment = (QuestionRoomFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        getInstrumentation().runOnMainSync((new Runnable() {
+            @Override
+            public void run() {
+                questionRoomFragment.scrollToTop();
+            }
+        }));
+        getInstrumentation().waitForIdleSync();
     }
 
     @MediumTest
@@ -75,20 +86,20 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
         getInstrumentation().waitForIdleSync();
         PostActivity postActivity = (PostActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,10000);
         onView(withId(R.id.question_title)).perform(typeText("android test title"), closeSoftKeyboard());
-        try { Thread.sleep(1000);} catch (InterruptedException e) {};
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
         onView(withId(R.id.question_content)).perform(typeText("android test content"), closeSoftKeyboard());
-        try { Thread.sleep(1000);} catch (InterruptedException e) {};
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
         onView(withId(R.id.sendButton)).perform(click());
     }
 
     @MediumTest
     public void testReplyQuestion() {
         testSendQuestion();
-        try { Thread.sleep(1000);} catch (InterruptedException e) {};
-        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(PostActivity.class.getName(), null, false);
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
+        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(QuestionActivity.class.getName(), null, false);
 
         final RecyclerView  recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
-        assertNotNull("Question activity is not null", recyclerView);
+        assertNotNull("RecyclerView is not null", recyclerView);
 
         getInstrumentation().runOnMainSync((new Runnable() {
             @Override
@@ -106,9 +117,14 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
         }));
         getInstrumentation().waitForIdleSync();
 
-        PostActivity postActivity = (PostActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,5000);
-        getInstrumentation().waitForIdleSync();
+        QuestionActivity questionActivity = (QuestionActivity) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,5000);
+        //test small functions
+        questionActivity.deletePost("");
+        questionActivity.updateEcho("", 0, false);
+
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
         onView(withId(R.id.fab)).perform(click());
+        getInstrumentation().waitForIdleSync();
         try { Thread.sleep(2000);} catch (InterruptedException e) {};
         onView(withId(R.id.question_title)).perform(typeText("android test reply title"), closeSoftKeyboard());
         try { Thread.sleep(2000);} catch (InterruptedException e) {};
@@ -148,11 +164,11 @@ public class QuestionRoomFragmentTest extends ActivityInstrumentationTestCase2<B
 
         //send addition question
         testSendQuestion();
-        try { Thread.sleep(1000);} catch (InterruptedException e) {};
+        try { Thread.sleep(2000);} catch (InterruptedException e) {};
 
         //test admin functions
         final RecyclerView  recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
-        assertNotNull("Question activity is not null", recyclerView);
+        assertNotNull("RecyclerView is not null", recyclerView);
 
         getInstrumentation().runOnMainSync((new Runnable() {
             @Override

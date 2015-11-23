@@ -29,7 +29,7 @@ public class RoomTest  extends TestCase {
 
         assertEquals("Compare to itself",publicRoom.equals(publicRoom),true);
 
-        assertEquals("Compare to anothe object",publicRoom.equals(new Object()),false);
+        assertEquals("Compare to another object",publicRoom.equals(new Object()),false);
 
         Room room = new Room(publicRoom.name,publicRoom.questionCount);
         assertEquals("Equal object",publicRoom.equals(room),true);
