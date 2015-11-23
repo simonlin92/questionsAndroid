@@ -26,21 +26,13 @@ public class FavouriteFragmentTest extends ActivityInstrumentationTestCase2<Base
 
         navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
         drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-        getInstrumentation().waitForIdleSync();
-
-        navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
-
-        Menu menu = navigationView.getMenu();
-        final MenuItem favouriteMenu = menu.findItem(R.id.menu_favourite);
-        getInstrumentation().runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
+                Menu menu = navigationView.getMenu();
+                final MenuItem favouriteMenu = menu.findItem(R.id.menu_favourite);
                 getActivity().onNavigationItemSelected(favouriteMenu);
             }
         });

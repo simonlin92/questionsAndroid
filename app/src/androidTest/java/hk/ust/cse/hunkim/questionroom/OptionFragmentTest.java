@@ -52,8 +52,6 @@ public class OptionFragmentTest extends ActivityInstrumentationTestCase2<BaseAct
         });
         getInstrumentation().waitForIdleSync();
 
-        navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
-
         Menu menu = navigationView.getMenu();
         final MenuItem optionMenu = menu.findItem(R.id.menu_option);
         getInstrumentation().runOnMainSync(new Runnable() {

@@ -68,7 +68,9 @@ public class AdminLoginFragmentTest extends ActivityInstrumentationTestCase2<Bas
     public void testLogin()
     {
         onView(withId(R.id.admin_name)).perform(typeText("wrong name"), closeSoftKeyboard());
+        try{Thread.sleep(2000);}catch(Exception e){};
         onView(withId(R.id.admin_password)).perform(typeText("wrong password"), closeSoftKeyboard());
+        try{Thread.sleep(2000);}catch(Exception e){};
         onView(withId(R.id.admin_submit)).perform(click());
         //wait for changing
         try{Thread.sleep(2000);}catch(Exception e){};
@@ -85,7 +87,9 @@ public class AdminLoginFragmentTest extends ActivityInstrumentationTestCase2<Bas
         getInstrumentation().waitForIdleSync();
 
         onView(withId(R.id.admin_name)).perform(typeText("test@email.com"), closeSoftKeyboard());
+        try{Thread.sleep(2000);}catch(Exception e){};
         onView(withId(R.id.admin_password)).perform(typeText("123456"), closeSoftKeyboard());
+        try{Thread.sleep(2000);}catch(Exception e){};
         onView(withId(R.id.admin_submit)).perform(click());
         //wait for changing
         try{Thread.sleep(3000);}catch(Exception e){};

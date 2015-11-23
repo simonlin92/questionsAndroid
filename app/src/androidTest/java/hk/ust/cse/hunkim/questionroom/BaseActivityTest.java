@@ -1,23 +1,27 @@
 package hk.ust.cse.hunkim.questionroom;
 
-import android.app.Instrumentation;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
-import android.widget.EditText;
+import android.test.suitebuilder.annotation.SmallTest;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import java.util.concurrent.Semaphore;
-
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActivity> {
 
-    private BaseActivity baseActivity;
-    private RecyclerView recyclerView;
-    private FloatingActionButton fab;
-    private TextInputLayout textInputLayout;
-    private EditText editText;
+    private NavigationView navigationView;
+    private DrawerLayout drawerLayout;
 
     public BaseActivityTest() {
         super(BaseActivity.class);
@@ -27,72 +31,54 @@ public class BaseActivityTest extends ActivityInstrumentationTestCase2<BaseActiv
     protected void setUp() throws Exception {
         super.setUp();
 
-        baseActivity = getActivity();
-        recyclerView  = (RecyclerView) baseActivity.findViewById(R.id.recyclerView);
-        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        try { Thread.sleep(5000);} catch (InterruptedException e) {};
+        navigationView = (NavigationView) getActivity().findViewById(R.id.main_navigation);
+        drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
     }
 
-    @MediumTest
-    public void testInputDialogPreconditions()
-    {
-        assertNotNull("Base Activity is not null", baseActivity);
-        assertNotNull("Recycler View is not null", recyclerView);
-        assertNotNull("Floating Action Button is not null", fab);
-    }
-
-    @MediumTest
-    public void testEnterValidRoomName() {
-        assertEquals("Room name is valid", true, enterRoom("123"));
-        assertEquals("Room name is valid", true, enterRoom("456"));
-        assertEquals("Room name is valid", true, enterRoom("789"));
-    }
-
-    @MediumTest
-    public void testEnterInvalidRoomName() {
-        assertEquals("Room name is invalid", false, enterRoom("..."));
-        assertEquals("Room name is invalid", false, enterRoom("AS."));
-        assertEquals("Room name is invalid", false, enterRoom("12."));
-    }
-
-    private boolean enterRoom(String roomName) {
-        final Semaphore semaphore = new Semaphore(1);
-        try{semaphore.acquire();}catch(Exception e){};
-        baseActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fab.performClick();
-                semaphore.release();
-            }
-        });
-/*
+    @SmallTest
+    public void testBackPressed() {
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View input_dialog = inflater.inflate(R.layout.input_dialog, null);
-                textInputLayout = (TextInputLayout) input_dialog.findViewById(R.id.textInput);
-                editText = textInputLayout.getEditText();
-                editText.requestFocus();
+                getActivity().onBackPressed();
             }
-        });*/
+        });
         getInstrumentation().waitForIdleSync();
-        getInstrumentation().sendStringSync(roomName);
-        getInstrumentation().waitForIdleSync();
+    }
 
-        assertNotNull("Text Input Layout  is not null", textInputLayout);
-        assertNotNull("Edit Text is not null", editText);
-        semaphore.release();
+    @SmallTest
+    public void testNavigationView() {
+        navigateTo(R.id.menu_roomlist);
+        navigateTo(R.id.menu_favourite);
+        navigateTo(R.id.menu_option);
+        navigateTo(R.id.menu_login);
+    }
 
-        try{Thread.sleep(1000);}catch(Exception e){};
-        Instrumentation.ActivityMonitor activityMonitor = getInstrumentation().addMonitor(QuestionRoomFragment.class.getName(), null, false);
+    private void navigateTo(final int id)
+    {
+        for(int i=0;i < 1;i++) {
+            try { Thread.sleep(2000);} catch (InterruptedException e) {};
+            getInstrumentation().runOnMainSync(new Runnable() {
+                @Override
+                public void run() {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                    Menu menu = navigationView.getMenu();
+                    final MenuItem optionMenu = menu.findItem(id);
+                    getActivity().onNavigationItemSelected(optionMenu);
+                }
+            });
+            getInstrumentation().waitForIdleSync();
 
-        try{Thread.sleep(1000);}catch(Exception e){};
-        //QuestionRoomFragment questionFragment = (QuestionRoomFragment) getInstrumentation().waitForMonitorWithTimeout(activityMonitor,2000);
-        try{Thread.sleep(1000);}catch(Exception e){};
-/*
-        boolean result = (questionFragment != null);
-        if(result)
-            questionFragment.finish();*/
-        return true;
+            Menu menu = navigationView.getMenu();
+            final MenuItem optionMenu = menu.findItem(id);
+            getInstrumentation().runOnMainSync(new Runnable() {
+                @Override
+                public void run() {
+                    getActivity().onNavigationItemSelected(optionMenu);
+                }
+            });
+            getInstrumentation().waitForIdleSync();
+        }
     }
 }
