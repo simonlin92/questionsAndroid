@@ -51,7 +51,6 @@ import hk.ust.cse.hunkim.questionroom.room.RoomValueEventListener;
 
 public class QuestionRoomFragment extends Fragment {
     public static final String ROOM_NAME = "Room_name";
-    public static String sort_type;
     private DBUtil dbutil;
     private FirebaseAdapter firebaseAdapter;
     private QuestionSort questionSort;
@@ -363,7 +362,6 @@ public class QuestionRoomFragment extends Fragment {
             holder.cancelFixedTop.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
             holder.deletePost.setVisibility((AdminLoginFragment.admin) ? View.VISIBLE : View.GONE);
 
-
             holder.toFixedTop.setTag(question.getKey());
             holder.toFixedTop.setOnClickListener(
                     new View.OnClickListener() {
@@ -410,25 +408,7 @@ public class QuestionRoomFragment extends Fragment {
             }
             holder.echo.setText(String.valueOf(question.getEcho()));
             holder.date_Time.setText(String.valueOf(getDate(question.getTimestamp())));
-            FirebaseAdapter firebaseAdapter_order = new FirebaseAdapter(getActivity());
-            firebaseAdapter_order.setFirebase(firebaseAdapter_order.getFirebase().child(roomName).child("questions").child(question.getKey()).child("order"));
-            firebaseAdapter_order.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() == null)
-                        return;
-                    if ((Long) dataSnapshot.getValue() == 1) {
-                        holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorAccentDark));
-                    } else {
-                        holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorSub));
-                    }
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
-                }
-            });
+            holder.color.setBackgroundColor(ContextCompat.getColor(getActivity().getApplicationContext(), question.getOrder() == 1 ? R.color.colorAccentDark : R.color.colorSub));
             FirebaseAdapter firebaseAdapter = new FirebaseAdapter(getActivity());
             firebaseAdapter.setFirebase(firebaseAdapter.getFirebase().child(roomName).child("replies").child(question.getKey()));
             firebaseAdapter.addValueEventListener(new ValueEventListener() {
