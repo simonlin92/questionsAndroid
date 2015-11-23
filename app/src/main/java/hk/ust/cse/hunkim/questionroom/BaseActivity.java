@@ -109,7 +109,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-
     @Override
     public boolean onNavigationItemSelected(final MenuItem menuItem) {
         menuItem.setChecked(true);

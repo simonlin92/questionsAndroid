@@ -2,8 +2,6 @@ package hk.ust.cse.hunkim.questionroom.question;
 
 import java.util.Date;
 
-import hk.ust.cse.hunkim.questionroom.QuestionRoomFragment;
-
 /**
  * Created by hunkim on 7/16/15.
  */
@@ -154,6 +152,6 @@ public class Question {
             return false;
         }
         Question other = (Question) o;
-        return key.equals(other.key) && echo == other.echo;
+        return key.equals(other.key) && echo == other.echo && order == other.order;
     }
 }
