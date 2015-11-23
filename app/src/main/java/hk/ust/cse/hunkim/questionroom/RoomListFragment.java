@@ -41,6 +41,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     private RoomListAdapter adapter;
     private List<Room> dataSet;
     private CoordinatorLayout coordinatorLayout;
+    private MenuItem searchItem;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,12 +73,17 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.base_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        searchItem = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint("Enter Room Name");
         MenuItemCompat.setOnActionExpandListener(searchItem, this);
         searchView.setOnQueryTextListener(this);
         super.onCreateOptionsMenu(menu, inflater);
+
+        //Hard code fix
+        MenuItemCompat.expandActionView(searchItem);
+        MenuItemCompat.collapseActionView(searchItem);
+        ((AppBarLayout) findViewById(R.id.app_bar_layout)).setExpanded(true);
     }
 
     @Override
@@ -100,6 +106,7 @@ public class RoomListFragment extends Fragment implements SearchView.OnQueryText
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (Room.isNameValid(query)) {
+            MenuItemCompat.collapseActionView(searchItem);
             enterRoom(query);
             return true;
         }
